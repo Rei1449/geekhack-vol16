@@ -1,0 +1,23 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: geekcamp2024_vol16_frontend_container
+    tty: true
+    volumes:
+      - ./frontend:/app/frontend
+    ports:
+      - 3000:3000
+    command: /bin/sh -c 'npm install && npm run dev'
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: geekcamp2024_vol16_backend_container
+    ports:
+      - 8080:8080
+    tty: true
+    volumes:
+      - ./backend:/app/backend
