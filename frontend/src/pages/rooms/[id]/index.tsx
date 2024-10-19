@@ -5,15 +5,33 @@ export default function RoomPage() {
     const router = useRouter();
     const { id } = router.query;
 
+    const emojis = [
+        "🤯",
+        "😑",
+        "🤔",
+        "👍",
+        "🥹",
+        "🤩",
+    ]
+
     return (
         <Wrapper>
             <Message>
                 Room ID: {id}
             </Message>
-            <MessageFormWrapper>
-                <MessageInput />
-                <MessageSendButton/>
-            </MessageFormWrapper>
+            <FormWrapper>
+                <EmojiWrapper>
+                    {emojis.map((emoji, index) => (
+                        <EmojiContainer key={index}>
+                            {emoji}
+                        </EmojiContainer>
+                    ))}
+                </EmojiWrapper>
+                <MessageFormWrapper>
+                    <MessageInput />
+                    <MessageSendButton />
+                </MessageFormWrapper>
+            </FormWrapper>
         </Wrapper>
     )
 }
@@ -29,11 +47,12 @@ const Message = styled.div`
     font-weight: 500;
 `;
 
-const MessageFormWrapper = styled.div`
+const FormWrapper = styled.div`
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
     padding: 16px;
-    gap: 16px;
+    gap: 8px;
     
     position: fixed;
     bottom: 0;
@@ -41,9 +60,16 @@ const MessageFormWrapper = styled.div`
     right: 0;
 `;
 
+const MessageFormWrapper = styled.div`
+    display: flex;
+    gap: 16px;
+    width: 600px;
+    max-width: 100%;
+`;
+
 const MessageInput = styled.div`
+    flex: 1;
     height: 50px; 
-    width: 300px;
     
     background-color: white;
     border-radius: 50px;
@@ -68,4 +94,21 @@ const MessageSendButton = styled.button`
     &:active {
         transform: scale(0.5);
     }
+`;
+
+const EmojiWrapper = styled.div`
+    display: flex;
+    gap: 4px;
+`;
+
+const EmojiContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 32px;
+    width: 48px;
+    height: 48px;
+    border-radius: 20px;
+    background-color: white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
 `;
