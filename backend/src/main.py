@@ -14,8 +14,12 @@ app.add_middleware(
   allow_headers=["*"],
 )
 
-class Room(BaseModel):
+class CreateRoomRequest(BaseModel):
     roomName: str
+
+class CreateMessageRequest(BaseModel):
+    id: str
+    message: str
 
 @app.get("/")
 async def root():
@@ -23,7 +27,7 @@ async def root():
 
 #新規ルーム作成
 @app.post("/rooms")
-async def root(room_request:Room):
+async def create_room(room_request:CreateRoomRequest):
     return {
       "roomId": uuid.uuid4(),
       "roomName": room_request.roomName
@@ -31,7 +35,7 @@ async def root(room_request:Room):
 
 #ルーム情報取得
 @app.get("/rooms/{room_id}")
-async def root(room_id:str):
+async def room(room_id:str):
     return{
     "id": room_id,
     "name": "Sample Room Name",
@@ -51,10 +55,10 @@ async def root(room_id:str):
 
 #メッセージ新規作成
 @app.post("/rooms/{room_id}/messages")
-async def root(room_id:str):
+async def create_message(room_id:str, message_request:CreateMessageRequest):
     return {
-      "id": "33d9c826-f54d-4b94-8551-005e276c1108",
+      "id": message_request.id,
       "roomId": room_id,
-      "message": "Hello, World!",
+      "message": message_request.message,
       "createdAt": int(time.time())
     }
