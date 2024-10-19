@@ -102,6 +102,7 @@ const EmojiWrapper = styled.div`
 `;
 
 const EmojiContainer = styled.div`
+    cursor: pointer;    
     display: flex;
     justify-content: center;
     align-items: center;
@@ -111,4 +112,10 @@ const EmojiContainer = styled.div`
     border-radius: 20px;
     background-color: white;
     border: 1px solid rgba(0, 0, 0, 0.1);
+    user-select: none;
+    transition: all 0.3s;
+
+    &:active {
+        transform: scale(0.7);
+    }
 `;
