@@ -12,7 +12,8 @@
     "next": "14.2.15",
     "react": "^18",
     "react-dom": "^18",
-    "styled-component": "^2.8.0"
+    "styled-component": "^2.8.0",
+    "styled-components": "^6.1.13"
   },
   "devDependencies": {
     "@types/node": "^20",
