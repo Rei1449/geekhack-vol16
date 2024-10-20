@@ -1,8 +1,9 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import time
 import uuid
+from typing import List
 
 app = FastAPI()
 
@@ -20,6 +21,29 @@ class CreateRoomRequest(BaseModel):
 class CreateMessageRequest(BaseModel):
     id: str
     message: str
+
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: dict[str, List[WebSocket]] = {}
+
+    async def connect(self, websocket: WebSocket, room_id: str):
+        await websocket.accept()
+        if room_id in self.active_connections:
+            self.active_connections[room_id].append(websocket)
+        else:
+            self.active_connections[room_id] = [websocket]
+        print("active_connections", self.active_connections)
+
+    def disconnect(self, websocket: WebSocket, room_id: str):
+        self.active_connections[room_id].remove(websocket)
+        print("active_connections", self.active_connections)
+
+    async def broadcast(self, room_id:str, message: str):
+        for connection in self.active_connections[room_id]:
+            await connection.send_text(message)
+
+
+manager = ConnectionManager()
 
 @app.get("/")
 async def root():
@@ -62,3 +86,13 @@ async def create_message(room_id:str, message_request:CreateMessageRequest):
       "message": message_request.message,
       "createdAt": int(time.time())
     }
+
+@app.websocket("/rooms/{room_id}")
+async def connect_websocket(websocket: WebSocket, room_id: str):
+    await manager.connect(websocket, room_id)
+    try:
+        while True:
+            data = await websocket.receive_text()
+    except WebSocketDisconnect:
+        manager.disconnect(websocket, room_id)
+        print("websocket disconnected", websocket)
