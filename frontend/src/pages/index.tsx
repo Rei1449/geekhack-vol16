@@ -1,7 +1,13 @@
+import styled from "styled-components";
+
 export default function Home() {
   return (
-    <div>
+    <Message>
       HELLO WORRRRRRRRR😘
-    </div>
+    </Message>
   );
 }
+
+const Message = styled.div`
+  color: red;
+`;
