@@ -85,14 +85,12 @@ async def create_message(room_id:str, message_request:CreateMessageRequest):
     message = {
       "type":"messages/new",
       "id": message_request.id,
-      "roomId": room_id,
       "message": message_request.message,
       "createdAt": now
     }
     await manager.broadcast(room_id, str(message))
     return {
       "id": message_request.id,
-      "roomId": room_id,
       "message": message_request.message,
       "createdAt": now
     }
