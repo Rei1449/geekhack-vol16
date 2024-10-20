@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import styled from "styled-components";
+import SendIcon from "src/components/svg/send.svg";
 
 export default function RoomPage() {
     const router = useRouter();
@@ -31,7 +32,9 @@ export default function RoomPage() {
                     <MessageFormInputArea >
                         <MessageFormInput placeholder="メッセージを入力" />
                     </MessageFormInputArea>
-                    <MessageSendButton />
+                    <MessageSendButton>
+                        <SendIcon color="#444444" style={{ userSelect: "none" }} />
+                    </MessageSendButton>
                 </MessageFormWrapper>
             </FormWrapper>
         </Wrapper>
@@ -92,6 +95,9 @@ const MessageFormInput = styled.input`
 `;
 
 const MessageSendButton = styled.button`
+    display: flex;
+    align-items: center;
+    justify-content: center;
     height: 50px;
     width: 50px;
     transition: all 0.3s;
