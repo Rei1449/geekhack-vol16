@@ -1,4 +1,4 @@
-class RoomApi {
+export class RoomApi {
     async createRoom({
         roomName
     }: CreateRoomRequest): Promise<Room> {
