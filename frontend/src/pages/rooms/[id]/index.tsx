@@ -28,7 +28,9 @@ export default function RoomPage() {
                     ))}
                 </EmojiWrapper>
                 <MessageFormWrapper>
-                    <MessageInput />
+                    <MessageFormInputArea >
+                        <MessageFormInput placeholder="メッセージを入力" />
+                    </MessageFormInputArea>
                     <MessageSendButton />
                 </MessageFormWrapper>
             </FormWrapper>
@@ -67,14 +69,26 @@ const MessageFormWrapper = styled.div`
     max-width: 100%;
 `;
 
-const MessageInput = styled.div`
+const MessageFormInputArea = styled.div`
     flex: 1;
     height: 50px; 
+    display: flex;
     
     background-color: white;
     border-radius: 50px;
     border: 1px solid rgba(0, 0, 0, 0.1);
     box-shadow: 10px 10px 0 rgb(156 160 160 / 40%);
+    padding: 0 16px;
+`;
+
+const MessageFormInput = styled.input`
+    width: 100%;
+    background-color: transparent;
+    border: none;
+
+    &:focus {
+        outline: none;
+    }
 `;
 
 const MessageSendButton = styled.button`
