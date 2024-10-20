@@ -17,7 +17,7 @@ app.add_middleware(
 )
 
 class CreateRoomRequest(BaseModel):
-    roomName: str
+    name: str
 
 class CreateMessageRequest(BaseModel):
     id: str
@@ -54,8 +54,8 @@ async def root():
 @app.post("/rooms")
 async def create_room(room_request:CreateRoomRequest):
     return {
-      "roomId": uuid.uuid4(),
-      "roomName": room_request.roomName
+      "id": uuid.uuid4(),
+      "name": room_request.name
     }
 
 #ルーム情報取得
