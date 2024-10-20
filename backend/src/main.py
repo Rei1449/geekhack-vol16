@@ -4,6 +4,7 @@ from pydantic import BaseModel
 import time
 import uuid
 from typing import List
+from collections import defaultdict
 
 app = FastAPI()
 
@@ -16,7 +17,7 @@ app.add_middleware(
 )
 
 class CreateRoomRequest(BaseModel):
-    roomName: str
+    name: str
 
 class CreateMessageRequest(BaseModel):
     id: str
@@ -24,7 +25,7 @@ class CreateMessageRequest(BaseModel):
 
 class ConnectionManager:
     def __init__(self):
-        self.active_connections: dict[str, List[WebSocket]] = {}
+        self.active_connections: dict[str, List[WebSocket]] = defaultdict(lambda: [])
 
     async def connect(self, websocket: WebSocket, room_id: str):
         await websocket.accept()
@@ -53,8 +54,8 @@ async def root():
 @app.post("/rooms")
 async def create_room(room_request:CreateRoomRequest):
     return {
-      "roomId": uuid.uuid4(),
-      "roomName": room_request.roomName
+      "id": uuid.uuid4(),
+      "name": room_request.name
     }
 
 #ルーム情報取得
@@ -80,11 +81,18 @@ async def room(room_id:str):
 #メッセージ新規作成
 @app.post("/rooms/{room_id}/messages")
 async def create_message(room_id:str, message_request:CreateMessageRequest):
+    now = int(time.time())
+    message = {
+      "type":"messages/new",
+      "id": message_request.id,
+      "message": message_request.message,
+      "createdAt": now
+    }
+    await manager.broadcast(room_id, str(message))
     return {
       "id": message_request.id,
-      "roomId": room_id,
       "message": message_request.message,
-      "createdAt": int(time.time())
+      "createdAt": now
     }
 
 @app.websocket("/rooms/{room_id}")
