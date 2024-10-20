@@ -20,7 +20,7 @@ async function roomApiTest() {
       const api = new RoomApi();
 
       // ルームを作成
-      const createdRoom = await api.createRoom({ roomName: 'room1' });
+      const createdRoom = await api.createRoom({ name: 'room1' });
       console.log({
         "tag": "createdRoom",
         "createdRoom": createdRoom

@@ -1,6 +1,6 @@
 export class RoomApi {
     async createRoom({
-        roomName
+        name
     }: CreateRoomRequest): Promise<Room> {
         throw new Error('implement me!');
     }
@@ -25,7 +25,7 @@ export class RoomApi {
 }
 
 type CreateRoomRequest = {
-    roomName: string
+    name: string
 }
 
 type GetRoomsRequest = {
