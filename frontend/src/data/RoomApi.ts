@@ -17,7 +17,12 @@ export class RoomApi {
     async getRoom({
         roomId
     }: GetRoomsRequest): Promise<Room | null> {
-        throw new Error('implement me!');
+        const response = await axios.get(`http://localhost:8080/rooms/${roomId}`);
+        return {
+            "id": response.data["id"],
+            "name": response.data["name"],
+            "messages":response.data["messages"],
+        }
     }
 
     async sendMessage({
