@@ -1,8 +1,17 @@
+import axios from "axios"
+
 export class RoomApi {
     async createRoom({
         name
     }: CreateRoomRequest): Promise<Room> {
-        throw new Error('implement me!');
+        const response = await axios.post("http://localhost:8080/rooms",{
+            name:name
+        });
+        return {
+            "id": response.data["id"],
+            "name": response.data["name"],
+            "messages":[],
+        }
     }
 
     async getRoom({
