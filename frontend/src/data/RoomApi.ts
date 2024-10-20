@@ -30,7 +30,15 @@ export class RoomApi {
         message,
         roomId,
     }: SendMessageRequest): Promise<Message> {
-        throw new Error('implement me!');
+        const response = await axios.post(`http://localhost:8080/rooms/${roomId}/messages`,{
+            id:id,
+            message:message
+        });
+        return {
+            "id": response.data["id"],
+            "message": response.data["message"],
+            "createdAt":response.data["createdAt"],
+        }
     }
 
     observeRoom({ }: ObserveRoom): void {
