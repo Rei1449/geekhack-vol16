@@ -1,14 +1,28 @@
+import axios from "axios"
+
 export class RoomApi {
     async createRoom({
         name
     }: CreateRoomRequest): Promise<Room> {
-        throw new Error('implement me!');
+        const response = await axios.post("http://localhost:8080/rooms",{
+            name:name
+        });
+        return {
+            "id": response.data["id"],
+            "name": response.data["name"],
+            "messages":[],
+        }
     }
 
     async getRoom({
         roomId
     }: GetRoomsRequest): Promise<Room | null> {
-        throw new Error('implement me!');
+        const response = await axios.get(`http://localhost:8080/rooms/${roomId}`);
+        return {
+            "id": response.data["id"],
+            "name": response.data["name"],
+            "messages":response.data["messages"],
+        }
     }
 
     async sendMessage({
@@ -16,7 +30,15 @@ export class RoomApi {
         message,
         roomId,
     }: SendMessageRequest): Promise<Message> {
-        throw new Error('implement me!');
+        const response = await axios.post(`http://localhost:8080/rooms/${roomId}/messages`,{
+            id:id,
+            message:message
+        });
+        return {
+            "id": response.data["id"],
+            "message": response.data["message"],
+            "createdAt":response.data["createdAt"],
+        }
     }
 
     observeRoom({ }: ObserveRoom): void {
