@@ -94,4 +94,5 @@ async def connect_websocket(websocket: WebSocket, room_id: str):
         while True:
             data = await websocket.receive_text()
     except WebSocketDisconnect:
+        manager.disconnect(websocket, room_id)
         print("websocket disconnected", websocket)
