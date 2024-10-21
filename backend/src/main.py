@@ -46,6 +46,8 @@ class ConnectionManager:
 
 manager = ConnectionManager()
 
+rooms=[]
+
 @app.get("/")
 async def root():
     return {"msg": "Hello World!!!!"}
@@ -53,10 +55,13 @@ async def root():
 #新規ルーム作成
 @app.post("/rooms")
 async def create_room(room_request:CreateRoomRequest):
-    return {
-      "id": uuid.uuid4(),
+    id = uuid.uuid4()
+    room = {
+      "id": id,
       "name": room_request.name
     }
+    rooms.append(room)
+    return (room for room_item in rooms if room_item["id"] == id)
 
 #ルーム情報取得
 @app.get("/rooms/{room_id}")
