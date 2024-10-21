@@ -1,5 +1,5 @@
 type Room = {
-    id: string
-    name: string
-    messages: Message[]
-}
+  id: string;
+  name: string;
+  messages: Message[];
+};
