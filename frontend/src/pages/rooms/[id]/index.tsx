@@ -1,19 +1,13 @@
 import { useRouter } from "next/router";
 import styled from "styled-components";
 import SendIcon from "src/components/svg/send.svg";
+import { useReaction } from "src/hooks/use-reaction";
 
 export default function RoomPage() {
     const router = useRouter();
     const { id } = router.query;
 
-    const emojis = [
-        "🤯",
-        "😑",
-        "🤔",
-        "👍",
-        "🥹",
-        "🤩",
-    ]
+    const { reactions } = useReaction();
 
     return (
         <Wrapper>
@@ -21,13 +15,19 @@ export default function RoomPage() {
                 Room ID: {id}
             </Message>
             <FormWrapper>
-                <EmojiWrapper>
-                    {emojis.map((emoji, index) => (
-                        <EmojiContainer key={index}>
-                            {emoji}
-                        </EmojiContainer>
+                <ReactionButtonStack>
+                    {reactions.map((reaction, index) => (
+                        reaction.type === "emoji" ? (
+                            <EmojiReactionButton key={index}>
+                                {reaction.text}
+                            </EmojiReactionButton>
+                        ) : (
+                            <PhraseReactionButton key={index}>
+                                {reaction.text}
+                            </PhraseReactionButton>
+                        )
                     ))}
-                </EmojiWrapper>
+                </ReactionButtonStack>
                 <MessageFormWrapper>
                     <MessageFormInputArea >
                         <MessageFormInput placeholder="メッセージを入力" />
@@ -58,7 +58,7 @@ const FormWrapper = styled.div`
     align-items: center;
     padding: 16px;
     gap: 8px;
-    
+
     position: fixed;
     bottom: 0;
     left: 0;
@@ -76,7 +76,7 @@ const MessageFormInputArea = styled.div`
     flex: 1;
     height: 50px; 
     display: flex;
-    
+
     background-color: white;
     border-radius: 50px;
     border: 1px solid rgba(0, 0, 0, 0.1);
@@ -116,19 +116,16 @@ const MessageSendButton = styled.button`
     }
 `;
 
-const EmojiWrapper = styled.div`
+const ReactionButtonStack = styled.div`
     display: flex;
     gap: 4px;
 `;
 
-const EmojiContainer = styled.div`
-    cursor: pointer;    
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 32px;
+const BaseReactionButton = styled.button`
+    cursor: pointer;
     width: 48px;
     height: 48px;
+    padding: 2px;
     border-radius: 20px;
     background-color: white;
     border: 1px solid rgba(0, 0, 0, 0.1);
@@ -138,4 +135,15 @@ const EmojiContainer = styled.div`
     &:active {
         transform: scale(0.7);
     }
+`;
+
+const EmojiReactionButton = styled(BaseReactionButton)`
+    font-size: 32px;
+`;
+
+const PhraseReactionButton = styled(BaseReactionButton)`
+    font-size: 16px;
+    width: auto;
+    white-space: nowrap;
+    padding-inline: 6px;
 `;
