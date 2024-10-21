@@ -1,10 +1,31 @@
 import { useMemo } from 'react';
 
-type Reaction = {
-  type: 'emoji' | 'phrase';
-  text: '🤯' | '😑' | '🤔' | '👍' | '🥹' | '🤩' | 'わかる' | 'わからん';
-  sentiment: 'positive' | 'negative';
+const ReactionType = {
+  EMOJI: 'emoji',
+  PHRASE: 'phrase',
+} as const;
+type ReactionType = (typeof ReactionType)[keyof typeof ReactionType];
+
+const ReactionText = {
+  EMOJI_SET: ['🤯', '😑', '🤔', '👍', '🥹', '🤩'] as const,
+  PHRASE_SET: ['わかる', 'わからん'] as const,
 };
+type EmojiText = (typeof ReactionText.EMOJI_SET)[number];
+type PhraseText = (typeof ReactionText.PHRASE_SET)[number];
+type ReactionTextType = EmojiText | PhraseText;
+
+const SentimentType = {
+  POSITIVE: 'positive',
+  NEGATIVE: 'negative',
+} as const;
+type SentimentType = (typeof SentimentType)[keyof typeof SentimentType];
+
+type Reaction = {
+  type: ReactionType;
+  text: ReactionTextType;
+  sentiment: SentimentType;
+};
+
 function useReaction() {
   const reactions: Reaction[] = useMemo(
     () => [
