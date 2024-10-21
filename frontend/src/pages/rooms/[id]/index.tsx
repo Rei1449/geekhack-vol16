@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import styled from "styled-components";
 import SendIcon from "src/components/svg/send.svg";
-import { useReaction } from "src/hooks/use-reaction";
+import { useReaction } from "src/hooks/useReaction";
 
 export default function RoomPage() {
     const router = useRouter();
