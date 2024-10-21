@@ -3,49 +3,49 @@ import { useMemo } from 'react';
 type Reaction = {
   type: 'emoji' | 'phrase';
   text: '🤯' | '😑' | '🤔' | '👍' | '🥹' | '🤩' | 'わかる' | 'わからん';
-  emotion: 'positive' | 'negative';
+  sentiment: 'positive' | 'negative';
 };
 function useReaction() {
   const reactions: Reaction[] = useMemo(
     () => [
       {
         text: 'わからん',
-        emotion: 'negative',
+        sentiment: 'negative',
         type: 'phrase',
       },
       {
         text: '🤯',
-        emotion: 'negative',
+        sentiment: 'negative',
         type: 'emoji',
       },
       {
         text: '😑',
-        emotion: 'negative',
+        sentiment: 'negative',
         type: 'emoji',
       },
       {
         text: '🤔',
-        emotion: 'negative',
+        sentiment: 'negative',
         type: 'emoji',
       },
       {
         text: '👍',
-        emotion: 'positive',
+        sentiment: 'positive',
         type: 'emoji',
       },
       {
         text: '🥹',
-        emotion: 'positive',
+        sentiment: 'positive',
         type: 'emoji',
       },
       {
         text: '🤩',
-        emotion: 'positive',
+        sentiment: 'positive',
         type: 'emoji',
       },
       {
         text: 'わかる',
-        emotion: 'positive',
+        sentiment: 'positive',
         type: 'phrase',
       },
     ],
