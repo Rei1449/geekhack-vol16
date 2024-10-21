@@ -1,5 +1,5 @@
 type Message = {
-    id: string
-    message: string
-    createdAt: number
-}
+  id: string;
+  message: string;
+  createdAt: number;
+};

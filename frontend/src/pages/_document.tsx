@@ -1,6 +1,6 @@
-import { ServerStyleSheet } from "styled-components";
-import type { DocumentContext, DocumentInitialProps } from "next/document";
-import Document from "next/document";
+import type { DocumentContext, DocumentInitialProps } from 'next/document';
+import Document from 'next/document';
+import { ServerStyleSheet } from 'styled-components';
 
 // https://github.com/vercel/next.js/blob/canary/examples/with-styled-components-babel/pages/_document.tsx
 export default class MyDocument extends Document {
