@@ -75,7 +75,8 @@ async def create_room(room_request:CreateRoomRequest):
     id = str(uuid.uuid4())
     room = {
       "id": id,
-      "name": room_request.name
+      "name": room_request.name,
+      "messages":[]
     }
     rooms.append(room)
     return room
@@ -83,11 +84,10 @@ async def create_room(room_request:CreateRoomRequest):
 #ルーム情報取得
 @app.get("/rooms/{room_id}")
 async def room(room_id:str):
-    result = [room_item for room_item in rooms if room_item["id"] == room_id]
-    if len(result) != 0:
-        return result[0]
-    else:
-        return None
+    for room_item in rooms:
+        if room_item["id"] == room_id:
+            return room_item
+    return None
 
 #メッセージ新規作成
 @app.post("/rooms/{room_id}/messages")
@@ -100,6 +100,11 @@ async def create_message(room_id:str, message_request:CreateMessageRequest):
       "createdAt": now
     }
     await manager.broadcast(room_id, str(message))
+
+    for i in range(len(rooms)):
+        if rooms[i]["id"] == room_id:
+            rooms[i]["messages"].append(message)
+    
     return {
       "id": message_request.id,
       "message": message_request.message,
