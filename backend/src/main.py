@@ -46,29 +46,10 @@ class ConnectionManager:
 
 manager = ConnectionManager()
 
-rooms=[]
-
-@app.get("/")
-async def root():
-    return {"msg": "Hello World!!!!"}
-
-#新規ルーム作成
-@app.post("/rooms")
-async def create_room(room_request:CreateRoomRequest):
-    id = uuid.uuid4()
-    room = {
-      "id": id,
-      "name": room_request.name
-    }
-    rooms.append(room)
-    return (room for room_item in rooms if room_item["id"] == id)
-
-#ルーム情報取得
-@app.get("/rooms/{room_id}")
-async def room(room_id:str):
-    return{
-    "id": room_id,
-    "name": "Sample Room Name",
+rooms=[
+    {
+    "id": "abc",
+    "name": "name",
     "messages": [
         {
             "id": "eee9a636-ea03-408e-86b6-5b75813a7d19",
@@ -81,7 +62,32 @@ async def room(room_id:str):
             "createdAt": 1729249549
         }
     ]
-}
+},
+]
+
+@app.get("/")
+async def root():
+    return {"msg": "Hello World!!!!"}
+
+#新規ルーム作成
+@app.post("/rooms")
+async def create_room(room_request:CreateRoomRequest):
+    id = str(uuid.uuid4())
+    room = {
+      "id": id,
+      "name": room_request.name
+    }
+    rooms.append(room)
+    return room
+
+#ルーム情報取得
+@app.get("/rooms/{room_id}")
+async def room(room_id:str):
+    result = [room_item for room_item in rooms if room_item["id"] == room_id]
+    if len(result) != 0:
+        return result[0]
+    else:
+        return None
 
 #メッセージ新規作成
 @app.post("/rooms/{room_id}/messages")
