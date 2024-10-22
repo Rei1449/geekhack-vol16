@@ -1,22 +1,29 @@
 import { useRouter } from 'next/router';
 import SendIcon from 'src/components/svg/send.svg';
+import { isEmojiReaction, REACTION_TEXT } from 'src/model/Message';
 import styled from 'styled-components';
 
 export default function RoomPage() {
   const router = useRouter();
   const { id } = router.query;
 
-  const emojis = ['🤯', '😑', '🤔', '👍', '🥹', '🤩'];
+  const reactions = [...REACTION_TEXT.NEGATIVE, ...REACTION_TEXT.POSITIVE];
 
   return (
     <Wrapper>
       <Message>Room ID: {id}</Message>
       <FormWrapper>
-        <EmojiWrapper>
-          {emojis.map((emoji, index) => (
-            <EmojiContainer key={index}>{emoji}</EmojiContainer>
-          ))}
-        </EmojiWrapper>
+        <ReactionButtonStack>
+          {reactions.map((reaction, index) =>
+            isEmojiReaction(reaction) ? (
+              <EmojiReactionButton key={index}>{reaction}</EmojiReactionButton>
+            ) : (
+              <PhraseReactionButton key={index}>
+                {reaction}
+              </PhraseReactionButton>
+            ),
+          )}
+        </ReactionButtonStack>
         <MessageFormWrapper>
           <MessageFormInputArea>
             <MessageFormInput placeholder="メッセージを入力" />
@@ -105,19 +112,16 @@ const MessageSendButton = styled.button`
   }
 `;
 
-const EmojiWrapper = styled.div`
+const ReactionButtonStack = styled.div`
   display: flex;
   gap: 4px;
 `;
 
-const EmojiContainer = styled.div`
+const BaseReactionButton = styled.button`
   cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 32px;
   width: 48px;
   height: 48px;
+  padding: 2px;
   border-radius: 20px;
   background-color: white;
   border: 1px solid rgba(0, 0, 0, 0.1);
@@ -127,4 +131,15 @@ const EmojiContainer = styled.div`
   &:active {
     transform: scale(0.7);
   }
+`;
+
+const EmojiReactionButton = styled(BaseReactionButton)`
+  font-size: 32px;
+`;
+
+const PhraseReactionButton = styled(BaseReactionButton)`
+  font-size: 16px;
+  width: auto;
+  white-space: nowrap;
+  padding-inline: 6px;
 `;
