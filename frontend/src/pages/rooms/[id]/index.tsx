@@ -1,13 +1,13 @@
 import { useRouter } from 'next/router';
 import SendIcon from 'src/components/svg/send.svg';
-import { useReaction } from 'src/hooks/useReaction';
+import { isEmojiReaction, REACTION_TEXT } from 'src/model/Message';
 import styled from 'styled-components';
 
 export default function RoomPage() {
   const router = useRouter();
   const { id } = router.query;
 
-  const { reactions } = useReaction();
+  const reactions = [...REACTION_TEXT.NEGATIVE, ...REACTION_TEXT.POSITIVE];
 
   return (
     <Wrapper>
@@ -15,13 +15,11 @@ export default function RoomPage() {
       <FormWrapper>
         <ReactionButtonStack>
           {reactions.map((reaction, index) =>
-            reaction.type === 'emoji' ? (
-              <EmojiReactionButton key={index}>
-                {reaction.text}
-              </EmojiReactionButton>
+            isEmojiReaction(reaction) ? (
+              <EmojiReactionButton key={index}>{reaction}</EmojiReactionButton>
             ) : (
               <PhraseReactionButton key={index}>
-                {reaction.text}
+                {reaction}
               </PhraseReactionButton>
             ),
           )}
