@@ -15,6 +15,10 @@ const nextConfig = {
   images: {
     disableStaticImages: true, 
   },
+  env: {
+    PLOTOCOL: process.env.PLOTOCOL,
+    BACKEND_HOST: process.env.BACKEND_HOST
+  }
 };
 
 export default nextConfig;
