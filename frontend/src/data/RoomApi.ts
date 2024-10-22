@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { Message } from 'src/model/Message';
+import { Room } from 'src/model/Room';
 
 export class RoomApi {
   async createRoom({ name }: CreateRoomRequest): Promise<Room> {
