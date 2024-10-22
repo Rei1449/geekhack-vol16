@@ -1,4 +1,4 @@
-import { Message } from 'src/model/Message';
+import { Message } from 'src/models/Message';
 
 export type Room = {
   id: string;
