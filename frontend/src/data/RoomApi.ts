@@ -1,8 +1,9 @@
 import axios from 'axios';
 
 export class RoomApi {
+  private readonly baseUrl = `${process.env.BACKEND_PLOTOCOL}://${process.env.BACKEND_HOST}`;
   async createRoom({ name }: CreateRoomRequest): Promise<Room> {
-    const response = await axios.post('http://localhost:8080/rooms', {
+    const response = await axios.post(`${this.baseUrl}/rooms`, {
       name: name,
     });
     return {
@@ -13,7 +14,7 @@ export class RoomApi {
   }
 
   async getRoom({ roomId }: GetRoomsRequest): Promise<Room | null> {
-    const response = await axios.get(`http://localhost:8080/rooms/${roomId}`);
+    const response = await axios.get(`${this.baseUrl}/rooms/${roomId}`);
     return {
       id: response.data['id'],
       name: response.data['name'],
@@ -27,7 +28,7 @@ export class RoomApi {
     roomId,
   }: SendMessageRequest): Promise<Message> {
     const response = await axios.post(
-      `http://localhost:8080/rooms/${roomId}/messages`,
+      `${this.baseUrl}/rooms/${roomId}/messages`,
       {
         id: id,
         message: message,
