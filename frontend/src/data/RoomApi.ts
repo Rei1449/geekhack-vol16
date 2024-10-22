@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export class RoomApi {
-  private readonly baseUrl = `${process.env.PLOTOCOL}://${process.env.BACKEND_HOST}`
+  private readonly baseUrl = `${process.env.BACKEND_PLOTOCOL}://${process.env.BACKEND_HOST}`
   async createRoom({ name }: CreateRoomRequest): Promise<Room> {
     const response = await axios.post(`${this.baseUrl}/rooms`, {
       name: name,
