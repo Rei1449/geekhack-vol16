@@ -1,6 +1,8 @@
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 import SendIcon from 'src/components/svg/send.svg';
 import { useRoom } from 'src/hooks/useRoom';
+import { Message } from 'src/models/Message';
 import styled from 'styled-components';
 
 export default function RoomPage() {
@@ -8,11 +10,19 @@ export default function RoomPage() {
   const { id } = router.query;
   const { room, sendMessage } = useRoom({ roomId: id as string });
 
+  // TODO: DELETE ME
+  const [messages, setMessages] = useState<Message[]>([]);
+
   const emojis = ['🤯', '😑', '🤔', '👍', '🥹', '🤩'];
 
   return (
     <Wrapper>
-      <Message>Room: {room?.name}</Message>
+      <RoomName>Room: {room?.name}</RoomName>
+      <div>
+        {messages.map((message, index) => (
+          <div key={index}>{message.message}</div>
+        ))}
+      </div>
       <FormWrapper>
         <EmojiWrapper>
           {emojis.map((emoji, index) => (
@@ -43,7 +53,7 @@ const Wrapper = styled.div`
   background-color: #f1f1f1;
 `;
 
-const Message = styled.div`
+const RoomName = styled.div`
   font-size: 24px;
   font-weight: 500;
 `;
