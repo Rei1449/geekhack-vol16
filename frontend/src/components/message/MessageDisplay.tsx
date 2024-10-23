@@ -66,6 +66,7 @@ export const MessageDisplay = ({
             position: 'absolute',
             top: message.animationParams.position.y,
             left: message.animationParams.position.x,
+            transform: `scale(${message.animationParams.scale})`,
           }}
         >
           {message.message}
