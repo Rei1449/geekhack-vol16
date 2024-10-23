@@ -70,7 +70,7 @@ export const MessageDisplay = ({
             filter: `blur(${message.animationParams.blur}px)`,
           }}
         >
-          {message.message} {message.animationParams.blur}
+          {message.message}
         </div>
       ))}
     </Wrapper>
@@ -80,6 +80,9 @@ export const MessageDisplay = ({
 const Wrapper = styled.div`
   width: 100%;
   height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  position: relative;
   overflow: hidden;
 
   background-color: #f0f0f0;
