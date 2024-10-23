@@ -1,7 +1,8 @@
 name: build-frontend
 run-name: Build by @${{ github.actor }}
 on:
-    push:
+   # TODO: frontendにファイル修正があったときだけ、CIを実行するようにしたい
+    pull_request:
         branches-ignore:
             - master
 defaults:
