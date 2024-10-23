@@ -1,12 +1,12 @@
+import { RoomApi } from 'src/data/RoomApi';
+import { useRouter } from 'next/router';
+
 export const useRoomCreate = () => {
-  // TODO: UNCOMMENT ME!
-  // const router = useRouter();
-
-  const createRoom = ({ name }: { name: string }) => {
-    console.log(name);
-
-    // TODO: ルームを作成したら、作成したルームに遷移する
-    // router.push(`/rooms/${room.id}`);
+  const router = useRouter();
+  const createRoom = async ({ name }: { name: string }) => {
+    const api = new RoomApi();
+    const createdRoom = await api.createRoom({ name: name });
+    router.push(`/rooms/${createdRoom.id}`);
   };
 
   return { createRoom };
