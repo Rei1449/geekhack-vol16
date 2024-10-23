@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { RoomApi } from 'src/data/RoomApi';
-import styled from 'styled-components';
+import { Message } from 'src/models/Message';
 
 export default function Home() {
   useEffect(() => {
@@ -11,7 +11,7 @@ export default function Home() {
       });
   }, []);
 
-  return <Message>HELLO WORRRRRRRRR😘</Message>;
+  return <div>HELLO WORRRRRRRRR😘</div>;
 }
 
 async function roomApiTest() {
@@ -41,8 +41,10 @@ async function roomApiTest() {
     tag: 'message',
     message: message,
   });
-}
 
-const Message = styled.div`
-  color: red;
-`;
+  //メッセージを受信
+  api.observeRoom({
+    roomId: createdRoom.id,
+    onMessage: ({ message }: { message: Message }) => console.log(message),
+  });
+}

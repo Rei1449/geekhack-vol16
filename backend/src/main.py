@@ -5,6 +5,7 @@ import time
 import uuid
 from typing import List
 from collections import defaultdict
+import json
 
 app = FastAPI()
 
@@ -99,7 +100,7 @@ async def create_message(room_id:str, message_request:CreateMessageRequest):
       "message": message_request.message,
       "createdAt": now
     }
-    await manager.broadcast(room_id, str(message))
+    await manager.broadcast(room_id, json.dumps(message))
 
     for i in range(len(rooms)):
         if rooms[i]["id"] == room_id:
