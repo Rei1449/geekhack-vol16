@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { Message } from 'src/models/Message';
+import { Room } from 'src/models/Room';
 
 export class RoomApi {
   private readonly baseUrl = `${process.env.BACKEND_PLOTOCOL}://${process.env.BACKEND_HOST}`;
