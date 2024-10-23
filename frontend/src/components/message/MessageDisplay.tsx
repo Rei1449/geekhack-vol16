@@ -61,6 +61,7 @@ export const MessageDisplay = ({
         <div
           key={index}
           style={{
+            fontSize: 32,
             opacity: message.animationParams.opacity,
             position: 'absolute',
             top: message.animationParams.position.y,
