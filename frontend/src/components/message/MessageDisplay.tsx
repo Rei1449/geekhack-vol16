@@ -61,10 +61,13 @@ export const MessageDisplay = ({
         <div
           key={index}
           style={{
+            fontSize: 32,
             opacity: message.animationParams.opacity,
             position: 'absolute',
             top: message.animationParams.position.y,
             left: message.animationParams.position.x,
+            transform: `scale(${message.animationParams.scale})`,
+            filter: `blur(${message.animationParams.blur}px)`,
           }}
         >
           {message.message}
@@ -77,6 +80,9 @@ export const MessageDisplay = ({
 const Wrapper = styled.div`
   width: 100%;
   height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  position: relative;
   overflow: hidden;
 
   background-color: #f0f0f0;
