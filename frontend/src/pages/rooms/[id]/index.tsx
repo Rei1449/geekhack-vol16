@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
 import { useCallback, useState } from 'react';
+import { MessageDisplay } from 'src/components/message/MessageDisplay';
 import SendIcon from 'src/components/svg/send.svg';
 import { useRoom } from 'src/hooks/useRoom';
 import { Message } from 'src/models/Message';
@@ -50,11 +51,7 @@ export default function RoomPage() {
   return (
     <Wrapper>
       <RoomName>Room: {room?.name}</RoomName>
-      <div>
-        {messages.map((message, index) => (
-          <div key={index}>{message.message}</div>
-        ))}
-      </div>
+      <MessageDisplay messages={messages} />
       <FormWrapper>
         <EmojiWrapper>
           {emojis.map((emoji, index) => (
@@ -83,7 +80,6 @@ export default function RoomPage() {
 const Wrapper = styled.div`
   width: 100%;
   height: 100%;
-  background-color: #f1f1f1;
 `;
 
 const RoomName = styled.div`
