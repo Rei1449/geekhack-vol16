@@ -1,20 +1,27 @@
 import { useRouter } from 'next/router';
 import SendIcon from 'src/components/svg/send.svg';
+import { useRoom } from 'src/hooks/useRoom';
 import styled from 'styled-components';
 
 export default function RoomPage() {
   const router = useRouter();
   const { id } = router.query;
+  const { room, sendMessage } = useRoom({ roomId: id as string });
 
   const emojis = ['🤯', '😑', '🤔', '👍', '🥹', '🤩'];
 
   return (
     <Wrapper>
-      <Message>Room ID: {id}</Message>
+      <Message>Room: {room?.name}</Message>
       <FormWrapper>
         <EmojiWrapper>
           {emojis.map((emoji, index) => (
-            <EmojiContainer key={index}>{emoji}</EmojiContainer>
+            <EmojiContainer
+              key={index}
+              onClick={() => sendMessage({ message: emoji })}
+            >
+              {emoji}
+            </EmojiContainer>
           ))}
         </EmojiWrapper>
         <MessageFormWrapper>
