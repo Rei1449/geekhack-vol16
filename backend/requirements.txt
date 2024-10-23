@@ -3,3 +3,6 @@ uvicorn
 pytest
 httpx
 websockets
+alembic
+psycopg2-binary
+python-dotenv
