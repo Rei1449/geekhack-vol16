@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import SendIcon from 'src/components/svg/send.svg';
 import { useRoom } from 'src/hooks/useRoom';
 import { Message } from 'src/models/Message';
@@ -8,12 +8,34 @@ import styled from 'styled-components';
 export default function RoomPage() {
   const router = useRouter();
   const { id } = router.query;
+  const [inputText, setInputText] = useState('');
   const { room, sendMessage } = useRoom({ roomId: id as string });
 
   // TODO: DELETE ME
   const [messages, setMessages] = useState<Message[]>([]);
 
   const emojis = ['🤯', '😑', '🤔', '👍', '🥹', '🤩'];
+
+  const onSendMessage = useCallback(() => {
+    if(inputText === '') return;
+
+    // TODO: DELETE ME
+    setMessages((prev) => {
+      return [...prev, { message: inputText, createdAt: Date.now(), id: Date.now().toString() }];
+    });
+
+    sendMessage({ message: inputText });
+    setInputText('');
+  }, [inputText]);
+
+  const onSendEmoji = useCallback(({ emoji }: { emoji: string }) => {
+    // TODO: DELETE ME
+    setMessages((prev) => {
+      return [...prev, { message: emoji, createdAt: Date.now(), id: Date.now().toString() }];
+    });
+
+    sendMessage({ message: emoji });
+  }, []);
 
   return (
     <Wrapper>
@@ -28,7 +50,7 @@ export default function RoomPage() {
           {emojis.map((emoji, index) => (
             <EmojiContainer
               key={index}
-              onClick={() => sendMessage({ message: emoji })}
+              onClick={() => onSendEmoji({ emoji })}
             >
               {emoji}
             </EmojiContainer>
@@ -36,9 +58,13 @@ export default function RoomPage() {
         </EmojiWrapper>
         <MessageFormWrapper>
           <MessageFormInputArea>
-            <MessageFormInput placeholder="メッセージを入力" />
+            <MessageFormInput
+              placeholder="メッセージを入力"
+              value={inputText}
+              onChange={(e) => setInputText(e.target.value)}
+            />
           </MessageFormInputArea>
-          <MessageSendButton>
+          <MessageSendButton onClick={onSendMessage}>
             <SendIcon color="#444444" style={{ userSelect: 'none' }} />
           </MessageSendButton>
         </MessageFormWrapper>
