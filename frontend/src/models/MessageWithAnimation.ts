@@ -67,7 +67,7 @@ function getScale(message: MessageWithAnimation) {
   const duration = 5 * 1000;
   const elapsedTime = Date.now() - message.createdAt;
   const scale = 1 - elapsedTime / duration;
-  return scale;
+  return Math.max(0, scale);
 }
 
 function getBlur(message: MessageWithAnimation) {
@@ -75,5 +75,5 @@ function getBlur(message: MessageWithAnimation) {
   const duration = 5 * 1000;
   const elapsedTime = Date.now() - message.createdAt;
   const blur = maxBlur - (maxBlur * (1 - elapsedTime / duration));
-  return blur;
+  return Math.min(maxBlur, blur);
 }
