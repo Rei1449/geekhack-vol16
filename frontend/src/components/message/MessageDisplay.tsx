@@ -67,9 +67,10 @@ export const MessageDisplay = ({
             top: message.animationParams.position.y,
             left: message.animationParams.position.x,
             transform: `scale(${message.animationParams.scale})`,
+            filter: `blur(${message.animationParams.blur}px)`,
           }}
         >
-          {message.message}
+          {message.message} {message.animationParams.blur}
         </div>
       ))}
     </Wrapper>

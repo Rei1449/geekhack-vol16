@@ -15,6 +15,7 @@ export type AnimationParams = {
   opacity: number;
   position: Position;
   scale: number;
+  blur: number;
 };
 
 export function createMessageWithAnimation({
@@ -28,6 +29,7 @@ export function createMessageWithAnimation({
   enterAt?: number;
   opacity?: number;
   scale?: number;
+  blur?: number;
 }): MessageWithAnimation {
   const padding = 64;
   return {
@@ -42,6 +44,7 @@ export function createMessageWithAnimation({
         y: Math.random() * (windowSize.height - padding) + padding,
       },
       scale: 1,
+      blur: 0,
     },
   };
 }
@@ -49,6 +52,7 @@ export function createMessageWithAnimation({
 export function updateAnimationParams(message: MessageWithAnimation) {
   message.animationParams.opacity = getOpacity(message);
   message.animationParams.scale = getScale(message);
+  message.animationParams.blur = getBlur(message);
   return message;
 }
 
@@ -64,4 +68,12 @@ function getScale(message: MessageWithAnimation) {
   const elapsedTime = Date.now() - message.createdAt;
   const scale = 1 - elapsedTime / duration;
   return scale;
+}
+
+function getBlur(message: MessageWithAnimation) {
+  const maxBlur = 5;
+  const duration = 5 * 1000;
+  const elapsedTime = Date.now() - message.createdAt;
+  const blur = maxBlur - (maxBlur * (1 - elapsedTime / duration));
+  return blur;
 }
