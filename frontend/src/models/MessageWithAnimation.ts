@@ -1,4 +1,6 @@
 import { Message } from 'src/models/Message';
+import { Position } from 'src/models/Positive';
+import { Size } from 'src/models/Size';
 
 export type MessageWithAnimation = {
   id: string;
@@ -11,17 +13,21 @@ export type AnimationParams = {
   // 描画開始タイミング
   enterAt: number;
   opacity: number;
+  position: Position; 
 };
 
 export function createMessageWithAnimation({
   message,
+  windowSize,
   enterAt = Date.now(),
   opacity = 1,
 }: {
   message: Message;
+  windowSize: Size;
   enterAt?: number;
   opacity?: number;
 }): MessageWithAnimation {
+  const padding = 64;
   return {
     id: message.id,
     message: message.message,
@@ -29,6 +35,10 @@ export function createMessageWithAnimation({
     animationParams: {
       enterAt,
       opacity,
+      position: {
+        x: Math.random() * (windowSize.width - padding) + padding,
+        y: Math.random() * (windowSize.height - padding) + padding,
+      },
     },
   };
 }

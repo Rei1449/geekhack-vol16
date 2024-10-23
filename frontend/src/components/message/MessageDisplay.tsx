@@ -26,7 +26,13 @@ export const MessageDisplay = ({
 
       prev.push(
         ...newMessages.map((message) =>
-          createMessageWithAnimation({ message }),
+          createMessageWithAnimation({ 
+            message,
+            windowSize: {
+                width: window.innerWidth,
+                height: window.innerHeight,
+            },
+         }),
         ),
       );
 
@@ -56,6 +62,9 @@ export const MessageDisplay = ({
           key={index}
           style={{
             opacity: message.animationParams.opacity,
+            position: 'absolute',
+            top: message.animationParams.position.y,
+            left: message.animationParams.position.x,
           }}
         >
           {message.message}
@@ -68,6 +77,7 @@ export const MessageDisplay = ({
 const Wrapper = styled.div`
   width: 100%;
   height: 100%;
+  overflow: hidden;
 
   background-color: #f0f0f0;
 `;
