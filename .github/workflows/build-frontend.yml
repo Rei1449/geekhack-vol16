@@ -13,7 +13,7 @@ jobs:
         with:
           node-version: '20'
       - name: Dependencies installing
-        run: npm ci
+        run: npm install
       # TODO: インストール後のタスクは並列して行いたい
       - name: Type Check
         run: npm run type-check
