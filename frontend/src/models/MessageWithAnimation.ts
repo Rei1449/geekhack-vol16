@@ -74,6 +74,6 @@ function getBlur(message: MessageWithAnimation) {
   const maxBlur = 5;
   const duration = 5 * 1000;
   const elapsedTime = Date.now() - message.createdAt;
-  const blur = maxBlur - (maxBlur * (1 - elapsedTime / duration));
+  const blur = maxBlur - maxBlur * (1 - elapsedTime / duration);
   return Math.min(maxBlur, blur);
 }
