@@ -41,34 +41,33 @@ export class RoomApi {
     };
   }
 
-  observeRoom({
-    roomId,
-    onMessage
-  }: ObserveRoom): void {
-    const connection = new WebSocket(`ws://${process.env.BACKEND_HOST}/rooms/${roomId}`);
+  observeRoom({ roomId, onMessage }: ObserveRoom): void {
+    const connection = new WebSocket(
+      `ws://${process.env.BACKEND_HOST}/rooms/${roomId}`,
+    );
 
     //接続時の処理 なくても良い
-    connection.onopen = function(){
-      console.log(`${roomId}に接続`)
-    }
+    connection.onopen = function () {
+      console.log(`${roomId}に接続`);
+    };
 
     //エラー発生
-    connection.onerror = function(error){
-      console.error("エラー",error)
-    }
+    connection.onerror = function (error) {
+      console.error('エラー', error);
+    };
 
     //メッセージ受信
-    connection.onmessage = function(event){
+    connection.onmessage = function (event) {
       const messageData = JSON.parse(event.data);
-      if (messageData['type'] === "messages/new"){
-        onMessage({ message: messageData })
+      if (messageData['type'] === 'messages/new') {
+        onMessage({ message: messageData });
       }
-    }
+    };
 
     //切断　なくても良い
-    connection.onclose = function(){
-      console.log("切断")
-    }
+    connection.onclose = function () {
+      console.log('切断');
+    };
   }
 }
 

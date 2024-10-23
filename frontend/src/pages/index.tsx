@@ -45,9 +45,8 @@ async function roomApiTest() {
   //メッセージを受信
   api.observeRoom({
     roomId: createdRoom.id,
-    onMessage: ({ message }: { message: Message }) => (console.log(message))
-  }
-  )
+    onMessage: ({ message }: { message: Message }) => console.log(message),
+  });
 }
 
 const Message = styled.div`
