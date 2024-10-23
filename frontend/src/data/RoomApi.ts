@@ -42,6 +42,8 @@ export class RoomApi {
     };
   }
 
+  // TODO: 削除
+  // eslint-disable-next-line no-empty-pattern
   observeRoom({}: ObserveRoom): void {
     throw new Error('implement me!');
   }
