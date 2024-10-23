@@ -4,6 +4,9 @@ on:
     push:
         branches-ignore:
             - master
+defaults:
+    run:
+        working-directory: frontend
 jobs:
   dependency-install:
     runs-on: ubuntu-latest
