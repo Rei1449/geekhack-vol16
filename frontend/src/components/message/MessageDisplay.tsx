@@ -26,13 +26,13 @@ export const MessageDisplay = ({
 
       prev.push(
         ...newMessages.map((message) =>
-          createMessageWithAnimation({ 
+          createMessageWithAnimation({
             message,
             windowSize: {
-                width: window.innerWidth,
-                height: window.innerHeight,
+              width: window.innerWidth,
+              height: window.innerHeight,
             },
-         }),
+          }),
         ),
       );
 

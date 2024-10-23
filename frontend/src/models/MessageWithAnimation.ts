@@ -13,7 +13,7 @@ export type AnimationParams = {
   // 描画開始タイミング
   enterAt: number;
   opacity: number;
-  position: Position; 
+  position: Position;
 };
 
 export function createMessageWithAnimation({
