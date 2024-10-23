@@ -46,7 +46,7 @@ export class RoomApi {
       `ws://${process.env.BACKEND_HOST}/rooms/${roomId}`,
     );
 
-    //接続時の処理 なくても良い
+    // TODO: 接続時の処理
     connection.onopen = function () {
       console.log(`${roomId}に接続`);
     };
@@ -64,7 +64,7 @@ export class RoomApi {
       }
     };
 
-    //切断　なくても良い
+    // TODO: 切断
     connection.onclose = function () {
       console.log('切断');
     };
