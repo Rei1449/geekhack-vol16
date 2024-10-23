@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import SendIcon from 'src/components/svg/send.svg';
 import { useRoom } from 'src/hooks/useRoom';
 import { Message } from 'src/models/Message';
@@ -17,11 +17,18 @@ export default function RoomPage() {
   const emojis = ['🤯', '😑', '🤔', '👍', '🥹', '🤩'];
 
   const onSendMessage = useCallback(() => {
-    if(inputText === '') return;
+    if (inputText === '') return;
 
     // TODO: DELETE ME
     setMessages((prev) => {
-      return [...prev, { message: inputText, createdAt: Date.now(), id: Date.now().toString() }];
+      return [
+        ...prev,
+        {
+          message: inputText,
+          createdAt: Date.now(),
+          id: Date.now().toString(),
+        },
+      ];
     });
 
     sendMessage({ message: inputText });
@@ -31,7 +38,10 @@ export default function RoomPage() {
   const onSendEmoji = useCallback(({ emoji }: { emoji: string }) => {
     // TODO: DELETE ME
     setMessages((prev) => {
-      return [...prev, { message: emoji, createdAt: Date.now(), id: Date.now().toString() }];
+      return [
+        ...prev,
+        { message: emoji, createdAt: Date.now(), id: Date.now().toString() },
+      ];
     });
 
     sendMessage({ message: emoji });
@@ -48,10 +58,7 @@ export default function RoomPage() {
       <FormWrapper>
         <EmojiWrapper>
           {emojis.map((emoji, index) => (
-            <EmojiContainer
-              key={index}
-              onClick={() => onSendEmoji({ emoji })}
-            >
+            <EmojiContainer key={index} onClick={() => onSendEmoji({ emoji })}>
               {emoji}
             </EmojiContainer>
           ))}
