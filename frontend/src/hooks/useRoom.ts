@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Room } from 'src/models/Room';
 import { RoomApi } from 'src/data/RoomApi';
+import { Message } from 'src/models/Message';
 
 export const useRoom = ({ roomId }: { roomId: string }) => {
   const [room, setRoom] = useState<Room | null>(null);
@@ -11,33 +12,24 @@ export const useRoom = ({ roomId }: { roomId: string }) => {
 
   const api = new RoomApi();
 
-  // ルームを取得
   useEffect(() => {
-    // TODO: ルームを取得する処理
-    const fetchRoom = async () => {
-      try{
-        const room = await api.getRoom({ roomId: roomId });
-        console.log({
-          tag: 'room',
-          room: room,
-        });
-        setRoom(room);
-      }catch (error) {
-        console.error(error);
-      }
-    };
-    fetchRoom()
+    api.getRoom({ roomId: roomId })
+    .then(room => { setRoom(room); })
+    .catch(error => { console.error(error); });
+  
     return () => {
       setRoom(null);
     };
-  }, [roomId]);
+  }, [roomId]);    
 
   useEffect(() => {
     if (!room) {
       return;
     }
-
-    // TODO: roomのメッセージをobserveする処理
+    api.observeRoom({
+      roomId: roomId,
+      onMessage: ({ message }: { message: Message }) => console.log(message),
+    });
   }, [room]);
 
   return {
