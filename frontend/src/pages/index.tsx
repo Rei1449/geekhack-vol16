@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { RoomApi } from 'src/data/RoomApi';
-import styled from 'styled-components';
+import { Message } from 'src/models/Message';
 
 export default function Home() {
   useEffect(() => {
@@ -11,7 +11,7 @@ export default function Home() {
       });
   }, []);
 
-  return <Message>HELLO WORRRRRRRRR😘</Message>;
+  return <div>HELLO WORRRRRRRRR😘</div>;
 }
 
 async function roomApiTest() {
@@ -48,7 +48,3 @@ async function roomApiTest() {
     onMessage: ({ message }: { message: Message }) => console.log(message),
   });
 }
-
-const Message = styled.div`
-  color: red;
-`;
