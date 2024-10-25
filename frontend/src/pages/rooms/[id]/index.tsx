@@ -17,13 +17,13 @@ export default function RoomPage() {
     if (inputText === '') return;
     sendMessage({ value: inputText });
     setInputText('');
-  }, [inputText]);
+  }, [inputText, sendMessage]);
 
   const handleSendReaction = useCallback(
     ({ reaction }: { reaction: string }) => {
       sendMessage({ value: reaction });
     },
-    [],
+    [sendMessage],
   );
 
   return (
