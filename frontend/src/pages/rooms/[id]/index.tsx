@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react';
 import { MessageDisplay } from 'src/components/message/MessageDisplay';
 import SendIcon from 'src/components/svg/send.svg';
 import { useRoom } from 'src/hooks/useRoom';
-import { Message } from 'src/models/Message';
+import { isEmoji, Message, REACTION_TEXT } from 'src/models/Message';
 import styled from 'styled-components';
 
 export default function RoomPage() {
@@ -15,9 +15,9 @@ export default function RoomPage() {
   // TODO: DELETE ME
   const [messages, setMessages] = useState<Message[]>([]);
 
-  const emojis = ['🤯', '😑', '🤔', '👍', '🥹', '🤩'];
+  const reactions = [...REACTION_TEXT.NEGATIVE, ...REACTION_TEXT.POSITIVE];
 
-  const onSendMessage = useCallback(() => {
+  const handleSendMessage = useCallback(() => {
     if (inputText === '') return;
 
     // TODO: DELETE ME
@@ -36,30 +36,49 @@ export default function RoomPage() {
     setInputText('');
   }, [inputText]);
 
-  const onSendEmoji = useCallback(({ emoji }: { emoji: string }) => {
-    // TODO: DELETE ME
-    setMessages((prev) => {
-      return [
-        ...prev,
-        { message: emoji, createdAt: Date.now(), id: Date.now().toString() },
-      ];
-    });
+  const handleSendReaction = useCallback(
+    ({ reaction }: { reaction: string }) => {
+      // TODO: DELETE ME
+      setMessages((prev) => {
+        return [
+          ...prev,
+          {
+            message: reaction,
+            createdAt: Date.now(),
+            id: Date.now().toString(),
+          },
+        ];
+      });
 
-    sendMessage({ message: emoji });
-  }, []);
+      sendMessage({ message: reaction });
+    },
+    [],
+  );
 
   return (
     <Wrapper>
       <RoomName>Room: {room?.name}</RoomName>
       <MessageDisplay messages={messages} />
       <FormWrapper>
-        <EmojiWrapper>
-          {emojis.map((emoji, index) => (
-            <EmojiContainer key={index} onClick={() => onSendEmoji({ emoji })}>
-              {emoji}
-            </EmojiContainer>
-          ))}
-        </EmojiWrapper>
+        <ReactionButtonStack>
+          {reactions.map((reaction, index) =>
+            isEmoji(reaction) ? (
+              <EmojiReactionButton
+                key={index}
+                onClick={() => handleSendReaction({ reaction })}
+              >
+                {reaction}
+              </EmojiReactionButton>
+            ) : (
+              <PhraseReactionButton
+                key={index}
+                onClick={() => handleSendReaction({ reaction })}
+              >
+                {reaction}
+              </PhraseReactionButton>
+            ),
+          )}
+        </ReactionButtonStack>
         <MessageFormWrapper>
           <MessageFormInputArea>
             <MessageFormInput
@@ -68,7 +87,7 @@ export default function RoomPage() {
               onChange={(e) => setInputText(e.target.value)}
             />
           </MessageFormInputArea>
-          <MessageSendButton onClick={onSendMessage}>
+          <MessageSendButton onClick={handleSendMessage}>
             <SendIcon color="#444444" style={{ userSelect: 'none' }} />
           </MessageSendButton>
         </MessageFormWrapper>
@@ -151,19 +170,16 @@ const MessageSendButton = styled.button`
   }
 `;
 
-const EmojiWrapper = styled.div`
+const ReactionButtonStack = styled.div`
   display: flex;
   gap: 4px;
 `;
 
-const EmojiContainer = styled.div`
+const BaseReactionButton = styled.button`
   cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 32px;
   width: 48px;
   height: 48px;
+  padding: 2px;
   border-radius: 20px;
   background-color: white;
   border: 1px solid rgba(0, 0, 0, 0.1);
@@ -173,4 +189,15 @@ const EmojiContainer = styled.div`
   &:active {
     transform: scale(0.7);
   }
+`;
+
+const EmojiReactionButton = styled(BaseReactionButton)`
+  font-size: 32px;
+`;
+
+const PhraseReactionButton = styled(BaseReactionButton)`
+  font-size: 16px;
+  width: auto;
+  white-space: nowrap;
+  padding-inline: 6px;
 `;
