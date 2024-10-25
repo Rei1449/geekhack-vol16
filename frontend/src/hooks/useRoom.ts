@@ -7,10 +7,30 @@ import { v4 as uuidv4 } from 'uuid';
 export const useRoom = ({ roomId }: { roomId: string }) => {
   const api = new RoomApi();
   const [room, setRoom] = useState<Room | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
 
-  const sendMessage = async ({ message }: { message: string }) => {
-    const messageId = uuidv4();
-    await api.sendMessage({ id: messageId, message, roomId });
+  const sendMessage = async ({ value }: { value: string }) => {
+    const message: Message = {
+      id: uuidv4(),
+      message: value,
+      createdAt: Date.now(),
+    };
+    setMessages((prev) => {
+      return [...prev, message];
+    });
+
+    await api.sendMessage({ id: message.id, message: message.message, roomId });
+  };
+
+  const pushMessage = (message: Message) => {
+    setMessages((prev) => {
+      // 自分で送信したメッセージはすでに追加されている
+      const isAlreadyExist = prev.some((m) => m.id === message.id);
+      if (isAlreadyExist) {
+        return prev;
+      }
+      return [...prev, message];
+    });
   };
 
   useEffect(() => {
@@ -34,12 +54,13 @@ export const useRoom = ({ roomId }: { roomId: string }) => {
     }
     api.observeRoom({
       roomId: roomId,
-      onMessage: ({ message }: { message: Message }) => console.log(message),
+      onMessage: ({ message }) => pushMessage(message),
     });
   }, [room]);
 
   return {
     room,
+    messages,
     sendMessage,
   };
 };

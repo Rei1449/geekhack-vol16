@@ -3,49 +3,24 @@ import { useCallback, useState } from 'react';
 import { MessageDisplay } from 'src/components/message/MessageDisplay';
 import SendIcon from 'src/components/svg/send.svg';
 import { useRoom } from 'src/hooks/useRoom';
-import { Message } from 'src/models/Message';
 import styled from 'styled-components';
 
 export default function RoomPage() {
   const router = useRouter();
   const { id } = router.query;
   const [inputText, setInputText] = useState('');
-  const { room, sendMessage } = useRoom({ roomId: id as string });
-
-  // TODO: DELETE ME
-  const [messages, setMessages] = useState<Message[]>([]);
+  const { room, messages, sendMessage } = useRoom({ roomId: id as string });
 
   const emojis = ['🤯', '😑', '🤔', '👍', '🥹', '🤩'];
 
   const onSendMessage = useCallback(() => {
     if (inputText === '') return;
-
-    // TODO: DELETE ME
-    setMessages((prev) => {
-      return [
-        ...prev,
-        {
-          message: inputText,
-          createdAt: Date.now(),
-          id: Date.now().toString(),
-        },
-      ];
-    });
-
-    sendMessage({ message: inputText });
+    sendMessage({ value: inputText });
     setInputText('');
   }, [inputText]);
 
   const onSendEmoji = useCallback(({ emoji }: { emoji: string }) => {
-    // TODO: DELETE ME
-    setMessages((prev) => {
-      return [
-        ...prev,
-        { message: emoji, createdAt: Date.now(), id: Date.now().toString() },
-      ];
-    });
-
-    sendMessage({ message: emoji });
+    sendMessage({ value: emoji });
   }, []);
 
   return (
