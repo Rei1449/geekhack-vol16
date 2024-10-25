@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { MessageDisplay } from 'src/components/message/MessageDisplay';
 import SendIcon from 'src/components/svg/send.svg';
 import { useRoom } from 'src/hooks/useRoom';
@@ -7,7 +7,7 @@ import styled from 'styled-components';
 
 export default function RoomPage() {
   const router = useRouter();
-  const { id } = router.query;
+  const { id } = useMemo(() => router.query, [router.query]);
   const [inputText, setInputText] = useState('');
   const { room, messages, sendMessage } = useRoom({ roomId: id as string });
 
