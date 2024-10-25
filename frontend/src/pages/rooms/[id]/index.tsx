@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import { useCallback, useState } from 'react';
 import SendIcon from 'src/components/svg/send.svg';
 import { useRoom } from 'src/hooks/useRoom';
-import { isEmojiReaction, Message, REACTION_TEXT } from 'src/models/Message';
+import { isEmoji, Message, REACTION_TEXT } from 'src/models/Message';
 import styled from 'styled-components';
 
 export default function RoomPage() {
@@ -16,7 +16,7 @@ export default function RoomPage() {
 
   const reactions = [...REACTION_TEXT.NEGATIVE, ...REACTION_TEXT.POSITIVE];
 
-  const onSendMessage = useCallback(() => {
+  const handleSendMessage = useCallback(() => {
     if (inputText === '') return;
 
     // TODO: DELETE ME
@@ -35,17 +35,24 @@ export default function RoomPage() {
     setInputText('');
   }, [inputText]);
 
-  const onSendEmoji = useCallback(({ reaction }: { reaction: string }) => {
-    // TODO: DELETE ME
-    setMessages((prev) => {
-      return [
-        ...prev,
-        { message: reaction, createdAt: Date.now(), id: Date.now().toString() },
-      ];
-    });
+  const handleSendReaction = useCallback(
+    ({ reaction }: { reaction: string }) => {
+      // TODO: DELETE ME
+      setMessages((prev) => {
+        return [
+          ...prev,
+          {
+            message: reaction,
+            createdAt: Date.now(),
+            id: Date.now().toString(),
+          },
+        ];
+      });
 
-    sendMessage({ message: reaction });
-  }, []);
+      sendMessage({ message: reaction });
+    },
+    [],
+  );
 
   return (
     <Wrapper>
@@ -58,17 +65,17 @@ export default function RoomPage() {
       <FormWrapper>
         <ReactionButtonStack>
           {reactions.map((reaction, index) =>
-            isEmojiReaction(reaction) ? (
+            isEmoji(reaction) ? (
               <EmojiReactionButton
                 key={index}
-                onClick={() => onSendEmoji({ reaction })}
+                onClick={() => handleSendReaction({ reaction })}
               >
                 {reaction}
               </EmojiReactionButton>
             ) : (
               <PhraseReactionButton
                 key={index}
-                onClick={() => onSendEmoji({ reaction })}
+                onClick={() => handleSendReaction({ reaction })}
               >
                 {reaction}
               </PhraseReactionButton>
@@ -83,7 +90,7 @@ export default function RoomPage() {
               onChange={(e) => setInputText(e.target.value)}
             />
           </MessageFormInputArea>
-          <MessageSendButton onClick={onSendMessage}>
+          <MessageSendButton onClick={handleSendMessage}>
             <SendIcon color="#444444" style={{ userSelect: 'none' }} />
           </MessageSendButton>
         </MessageFormWrapper>

@@ -21,7 +21,7 @@ export function isNegativeReaction(message: Message): boolean {
   );
 }
 
-export function isEmojiReaction(reactionText: string) {
+export function isEmoji(reactionText: string) {
   // INFO: 特定用途（絵文字一覧表示に使う絵文字だけ検知できればOK）で作りました
   // cf. https://corycory.hateblo.jp/entry/javascript/javascrip-reg-emoji/
   const regEmoji = new RegExp(
