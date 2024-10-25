@@ -58,14 +58,14 @@ export function updateAnimationParams(message: MessageWithAnimation) {
 
 function getOpacity(message: MessageWithAnimation) {
   const duration = 5 * 1000;
-  const elapsedTime = Date.now() - message.createdAt;
+  const elapsedTime = Date.now() - message.animationParams.enterAt;
   const opacity = 1 - elapsedTime / duration;
-  return opacity;
+  return Math.max(0, opacity);
 }
 
 function getScale(message: MessageWithAnimation) {
   const duration = 5 * 1000;
-  const elapsedTime = Date.now() - message.createdAt;
+  const elapsedTime = Date.now() - message.animationParams.enterAt;
   const scale = 1 - elapsedTime / duration;
   return Math.max(0, scale);
 }
@@ -73,7 +73,7 @@ function getScale(message: MessageWithAnimation) {
 function getBlur(message: MessageWithAnimation) {
   const maxBlur = 5;
   const duration = 5 * 1000;
-  const elapsedTime = Date.now() - message.createdAt;
+  const elapsedTime = Date.now() - message.animationParams.enterAt;
   const blur = maxBlur - maxBlur * (1 - elapsedTime / duration);
   return Math.min(maxBlur, blur);
 }

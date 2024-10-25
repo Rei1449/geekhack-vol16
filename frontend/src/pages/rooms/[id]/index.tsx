@@ -1,58 +1,29 @@
 import { useRouter } from 'next/router';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { MessageDisplay } from 'src/components/message/MessageDisplay';
 import SendIcon from 'src/components/svg/send.svg';
 import { useRoom } from 'src/hooks/useRoom';
-import { isEmoji, Message, REACTION_TEXT } from 'src/models/Message';
+import { isEmoji, REACTION_TEXT } from 'src/models/Message';
 import styled from 'styled-components';
 
 export default function RoomPage() {
   const router = useRouter();
-  const { id } = router.query;
+  const { id } = useMemo(() => router.query, [router.query]);
   const [inputText, setInputText] = useState('');
-  const { room, sendMessage } = useRoom({ roomId: id as string });
-
-  // TODO: DELETE ME
-  const [messages, setMessages] = useState<Message[]>([]);
-
+  const { room, messages, sendMessage } = useRoom({ roomId: id as string });
   const reactions = [...REACTION_TEXT.NEGATIVE, ...REACTION_TEXT.POSITIVE];
 
   const handleSendMessage = useCallback(() => {
     if (inputText === '') return;
-
-    // TODO: DELETE ME
-    setMessages((prev) => {
-      return [
-        ...prev,
-        {
-          message: inputText,
-          createdAt: Date.now(),
-          id: Date.now().toString(),
-        },
-      ];
-    });
-
-    sendMessage({ message: inputText });
+    sendMessage({ value: inputText });
     setInputText('');
-  }, [inputText]);
+  }, [inputText, sendMessage]);
 
   const handleSendReaction = useCallback(
     ({ reaction }: { reaction: string }) => {
-      // TODO: DELETE ME
-      setMessages((prev) => {
-        return [
-          ...prev,
-          {
-            message: reaction,
-            createdAt: Date.now(),
-            id: Date.now().toString(),
-          },
-        ];
-      });
-
-      sendMessage({ message: reaction });
+      sendMessage({ value: reaction });
     },
-    [],
+    [sendMessage],
   );
 
   return (

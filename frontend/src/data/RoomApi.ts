@@ -43,7 +43,7 @@ export class RoomApi {
     };
   }
 
-  observeRoom({ roomId, onMessage }: ObserveRoom): void {
+  observeRoom({ roomId, onMessage }: ObserveRoom) {
     const connection = new WebSocket(
       `ws://${process.env.BACKEND_HOST}/rooms/${roomId}`,
     );
@@ -69,6 +69,12 @@ export class RoomApi {
     // TODO: 切断
     connection.onclose = function () {
       console.log('切断');
+    };
+
+    return {
+      close: () => {
+        connection.close();
+      },
     };
   }
 }
