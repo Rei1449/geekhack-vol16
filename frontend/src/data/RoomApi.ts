@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { Message } from 'src/models/Message';
+import { Room } from 'src/models/Room';
 
 export class RoomApi {
   private readonly baseUrl = `${process.env.BACKEND_PLOTOCOL}://${process.env.BACKEND_HOST}`;
@@ -41,8 +43,33 @@ export class RoomApi {
     };
   }
 
-  observeRoom({}: ObserveRoom): void {
-    throw new Error('implement me!');
+  observeRoom({ roomId, onMessage }: ObserveRoom): void {
+    const connection = new WebSocket(
+      `ws://${process.env.BACKEND_HOST}/rooms/${roomId}`,
+    );
+
+    // TODO: 接続時の処理
+    connection.onopen = function () {
+      console.log(`${roomId}に接続`);
+    };
+
+    //エラー発生
+    connection.onerror = function (error) {
+      console.error('エラー', error);
+    };
+
+    //メッセージ受信
+    connection.onmessage = function (event) {
+      const messageData = JSON.parse(event.data);
+      if (messageData['type'] === 'messages/new') {
+        onMessage({ message: messageData });
+      }
+    };
+
+    // TODO: 切断
+    connection.onclose = function () {
+      console.log('切断');
+    };
   }
 }
 

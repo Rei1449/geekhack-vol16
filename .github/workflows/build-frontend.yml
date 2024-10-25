@@ -1,0 +1,28 @@
+name: build-frontend
+run-name: Build by @${{ github.actor }}
+on:
+   # TODO: frontendにファイル修正があったときだけ、CIを実行するようにしたい
+    pull_request:
+        branches-ignore:
+            - master
+defaults:
+    run:
+        working-directory: frontend
+jobs:
+  dependency-install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      - name: Dependencies installing
+        run: npm install
+      # TODO: インストール後のタスクは並列して行いたい
+      - name: Type Check
+        run: npm run type-check
+      - name: lint
+        run: npm run lint
+      - run: npm run format
+      - name: Check diff
+        run: git diff --exit-code
