@@ -41,6 +41,10 @@ export const useRoom = ({ roomId }: { roomId: string }) => {
   }, []);
 
   useEffect(() => {
+    if (!roomId) {
+      return;
+    }
+
     const api = new RoomApi();
     api
       .getRoom({ roomId: roomId })
