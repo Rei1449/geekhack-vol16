@@ -5,7 +5,7 @@ import { MoodGage } from 'src/components/message/MoodGage';
 import { Tutorial } from 'src/components/message/Tutorial';
 import SendIcon from 'src/components/svg/send.svg';
 import { Size } from 'src/constants/Size';
-import { useRoom } from 'src/hooks/useRoom';
+import { useRoom } from 'src/hooks/room';
 import { isEmoji, REACTION_TEXT } from 'src/models/Message';
 import styled from 'styled-components';
 
