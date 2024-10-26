@@ -15,7 +15,6 @@ export default function CreateRoomPage() {
   } = useForm<CreateRoomNameField>({ mode: 'onChange' });
 
   const handleCreateRoom: SubmitHandler<CreateRoomNameField> = (input) => {
-    console.log(input.roomName);
     createRoom({ name: input.roomName });
   };
 
