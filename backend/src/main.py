@@ -100,6 +100,14 @@ async def create_room(room_request:CreateRoomRequest):
       "messages":[]
     }
     rooms.append(room)
+
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(f"INSERT INTO rooms (id,name) VALUES('{room['id']}','{room['name']}')")
+    conn.commit()
+    cur.close()
+    conn.close()
+
     return room
 
 #ルーム情報取得
