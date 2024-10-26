@@ -12,9 +12,10 @@ export default function RoomPage() {
   const router = useRouter();
   const { id } = useMemo(() => router.query, [router.query]);
   const [inputText, setInputText] = useState('');
-  const { messages, sendMessage, isTutorialDone, moodPercentage } = useRoom({
-    roomId: id as string,
-  });
+  const { room, messages, sendMessage, isTutorialDone, moodPercentage } =
+    useRoom({
+      roomId: id as string,
+    });
   const reactions = [...REACTION_TEXT.NEGATIVE, ...REACTION_TEXT.POSITIVE];
 
   const handleSendMessage = useCallback(() => {
@@ -33,7 +34,10 @@ export default function RoomPage() {
   return (
     <Wrapper>
       <MessageDisplay messages={messages} />
-      <Tutorial isVisible={!isTutorialDone} moodPercentage={moodPercentage} />
+      <Tutorial
+        isVisible={!!room && !isTutorialDone}
+        moodPercentage={moodPercentage}
+      />
       <FormWrapper>
         <ReactionButtonStack>
           {reactions.map((reaction, index) =>
