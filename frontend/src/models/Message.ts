@@ -30,3 +30,24 @@ export function isEmoji(reactionText: string) {
   );
   return regEmoji.test(reactionText);
 }
+
+/**
+ * @param durationInSec: 考慮するメッセージの時間範囲（秒） この時間が長いと、盛り上がり度の動きが小さくなる。
+ * @param maxMessageCount: 100%とするメッセージ数
+ * @returns 盛り上がり度をパーセンテージで返す(0-100)
+ */
+export function calcMoodPercentage({
+  messages,
+  durationInSec = 30,
+  maxMessageCount = 50,
+}: {
+  messages: Message[];
+  durationInSec?: number;
+  maxMessageCount?: number;
+}): number {
+  const startAt = Date.now() - durationInSec * 1000;
+  const messagesInDuration = messages.filter(
+    (message) => message.createdAt > startAt,
+  );
+  return Math.min(messagesInDuration.length / maxMessageCount, 1.0) * 100;
+}
