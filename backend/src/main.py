@@ -130,9 +130,6 @@ async def create_message(room_id:str, message_request:CreateMessageRequest):
     }
     await manager.broadcast(room_id, json.dumps(message))
 
-    # for i in range(len(rooms)):
-    #     if rooms[i]["id"] == room_id:
-    #         rooms[i]["messages"].append(message)
     conn = get_connection()
     cur = conn.cursor()
     cur.execute(f"INSERT INTO messages (id,message,created_at,room_id) VALUES('{message['id']}','{message['message']}','{message['createdAt']}','{room_id}')")
