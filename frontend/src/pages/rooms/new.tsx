@@ -1,33 +1,50 @@
-import { useState } from 'react';
-import { useRoomCreate } from 'src/hooks/Room';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { useRoomCreate } from 'src/hooks/room';
 import styled from 'styled-components';
 
+type CreateRoomNameField = {
+  roomName: string;
+};
 export default function CreateRoomPage() {
   const { createRoom } = useRoomCreate();
-  const [roomName, setRoomName] = useState<string>('');
 
-  const handleCreateRoom = () => createRoom({ name: roomName });
+  const {
+    handleSubmit,
+    register,
+    formState: { errors, isValid, isSubmitting },
+  } = useForm<CreateRoomNameField>({ mode: 'onChange' });
+
+  const handleCreateRoom: SubmitHandler<CreateRoomNameField> = (input) => {
+    console.log(input.roomName);
+    createRoom({ name: input.roomName });
+  };
 
   return (
     <Container>
-      <Form id="roomNameForm">
+      <Form id="roomNameForm" onSubmit={handleSubmit(handleCreateRoom)}>
         <Flex>
           <FlexItem></FlexItem>
           <FlexItem>
-            <Input
-              id="roomName"
-              type="text"
-              value={roomName}
-              placeholder='"ぎゅわーん"な部屋の名前を作ろう'
-              onChange={(e) => setRoomName(e.target.value)}
-            />
+            <Label>
+              <Input
+                id="roomName"
+                type="text"
+                placeholder='"ぎゅわーん"な部屋の名前を書いてね！'
+                {...register('roomName', { required: true, minLength: 1 })}
+              />
+              {errors.roomName && (
+                <ErrorMessage>1文字以上入力してね</ErrorMessage>
+              )}
+            </Label>
           </FlexItem>
           <FlexItem>
             <ButtonContainer>
               <ButtonArea>
-                <SubmitButton form="roomName" onClick={handleCreateRoom}>
-                  はじめる
-                </SubmitButton>
+                <SubmitButton
+                  type="submit"
+                  value="はじめる"
+                  disabled={!isValid || isSubmitting}
+                />
               </ButtonArea>
             </ButtonContainer>
           </FlexItem>
@@ -70,7 +87,12 @@ const FlexItem = styled.div`
   width: 100%;
 `;
 
+const Label = styled.label`
+  position: relative;
+`;
+
 const Input = styled.input`
+  position: relative;
   width: 100%;
   padding: 1rem;
   font-size: 1.2rem;
@@ -82,6 +104,14 @@ const Input = styled.input`
   background: #f5efff;
 `;
 
+const ErrorMessage = styled.span`
+  position: absolute;
+  top: 250%;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #f7f4ea;
+`;
+
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -89,13 +119,19 @@ const ButtonContainer = styled.div`
 const ButtonArea = styled.div`
   width: 30%;
 `;
-const SubmitButton = styled.button`
+const SubmitButton = styled.input`
   width: 100%;
   padding-block: 0.2rem;
   padding-inline: 1.2rem;
   font-size: 1rem;
   border: none;
-  border-radius: 999px;
+  border-radius: 4px;
   color: #f5efff;
   background: #363062;
+  background: ${(props: React.InputHTMLAttributes<HTMLInputElement>) =>
+    props.disabled ? '#CDC1FF' : '#363062'};
+  box-sizing: border-box;
+  cursor: ${(props: React.InputHTMLAttributes<HTMLInputElement>) =>
+    props.disabled ? 'not-allowed' : 'pointer'};
+  transition: all 0.4s;
 `;
