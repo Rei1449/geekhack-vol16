@@ -16,6 +16,7 @@ const nextConfig = {
     disableStaticImages: true, 
   },
   env: {
+    BACKEND_WEBSOCKET_PROTOCOL: process.env.BACKEND_WEBSOCKET_PROTOCOL, 
     BACKEND_PLOTOCOL: process.env.BACKEND_PLOTOCOL,
     BACKEND_HOST: process.env.BACKEND_HOST
   }
