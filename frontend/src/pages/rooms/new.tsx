@@ -29,7 +29,8 @@ export default function CreateRoomPage() {
               <Input
                 id="roomName"
                 type="text"
-                placeholder='"ぎゅわーん"な部屋の名前を書いてね！'
+                autoComplete="off"
+                placeholder='"ぎゅわ〜ん"な部屋の名前を書いてね！'
                 {...register('roomName', { required: true, minLength: 1 })}
               />
               {errors.roomName && (
