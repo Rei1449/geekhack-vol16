@@ -1,6 +1,7 @@
+import { Size } from 'src/constants/Size';
 import { Message } from 'src/models/Message';
 import { Position } from 'src/models/Positive';
-import { Size } from 'src/models/Size';
+import { Size as SizeType } from 'src/models/Size';
 
 export type MessageWithAnimation = {
   id: string;
@@ -25,13 +26,19 @@ export function createMessageWithAnimation({
   opacity = 1,
 }: {
   message: Message;
-  windowSize: Size;
+  windowSize: SizeType;
   enterAt?: number;
   opacity?: number;
   scale?: number;
   blur?: number;
 }): MessageWithAnimation {
   const padding = 64;
+  const formHeight =
+    Size.Room.Form.MessageArea.height +
+    Size.Room.Form.ReactionButton.height +
+    Size.Room.Form.gap +
+    padding;
+
   return {
     id: message.id,
     message: message.message,
@@ -41,7 +48,7 @@ export function createMessageWithAnimation({
       opacity,
       position: {
         x: Math.random() * (windowSize.width - padding) + padding,
-        y: Math.random() * (windowSize.height - padding) + padding,
+        y: Math.random() * (windowSize.height - padding - formHeight) + padding,
       },
       scale: 1,
       blur: 0,

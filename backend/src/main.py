@@ -6,6 +6,12 @@ import uuid
 from typing import List
 from collections import defaultdict
 import json
+from dotenv import load_dotenv
+import os
+import psycopg2
+from psycopg2.extensions import connection
+
+load_dotenv()
 
 app = FastAPI()
 
@@ -66,6 +72,20 @@ rooms=[
 },
 ]
 
+def get_connection() -> connection:
+    return psycopg2.connect(os.getenv("DATABASE_URL"))
+
+@app.get("/test/get")
+async def get_test():
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM rooms")
+    print(cur.fetchall())
+    cur.close()
+    conn.close()
+    print("test")
+    return {"test": "test"}
+
 @app.get("/")
 async def root():
     return {"msg": "Hello World!!!!"}
@@ -80,6 +100,14 @@ async def create_room(room_request:CreateRoomRequest):
       "messages":[]
     }
     rooms.append(room)
+
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(f"INSERT INTO rooms (id,name) VALUES('{room['id']}','{room['name']}')")
+    conn.commit()
+    cur.close()
+    conn.close()
+
     return room
 
 #ルーム情報取得
@@ -102,10 +130,16 @@ async def create_message(room_id:str, message_request:CreateMessageRequest):
     }
     await manager.broadcast(room_id, json.dumps(message))
 
-    for i in range(len(rooms)):
-        if rooms[i]["id"] == room_id:
-            rooms[i]["messages"].append(message)
-    
+    # for i in range(len(rooms)):
+    #     if rooms[i]["id"] == room_id:
+    #         rooms[i]["messages"].append(message)
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(f"INSERT INTO messages (id,message,created_at,room_id) VALUES('{message['id']}','{message['message']}','{message['createdAt']}','{room_id}')")
+    conn.commit()
+    cur.close()
+    conn.close()
+
     return {
       "id": message_request.id,
       "message": message_request.message,
