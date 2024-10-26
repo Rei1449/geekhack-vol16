@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 import { useCallback, useMemo, useState } from 'react';
 import { MessageDisplay } from 'src/components/message/MessageDisplay';
 import { MoodGage } from 'src/components/message/MoodGage';
+import { Tutorial } from 'src/components/message/Tutorial';
 import SendIcon from 'src/components/svg/send.svg';
 import { Size } from 'src/constants/Size';
 import { useRoom } from 'src/hooks/useRoom';
@@ -12,9 +13,10 @@ export default function RoomPage() {
   const router = useRouter();
   const { id } = useMemo(() => router.query, [router.query]);
   const [inputText, setInputText] = useState('');
-  const { messages, sendMessage, moodPercentage } = useRoom({
-    roomId: id as string,
-  });
+  const { room, messages, sendMessage, isTutorialDone, moodPercentage } =
+    useRoom({
+      roomId: id as string,
+    });
   const reactions = [...REACTION_TEXT.NEGATIVE, ...REACTION_TEXT.POSITIVE];
 
   const handleSendMessage = useCallback(() => {
@@ -33,6 +35,10 @@ export default function RoomPage() {
   return (
     <Wrapper>
       <MessageDisplay messages={messages} />
+      <Tutorial
+        isVisible={!!room && !isTutorialDone}
+        moodPercentage={moodPercentage}
+      />
       <FormWrapper>
         <ReactionButtonStack>
           {reactions.map((reaction, index) =>
