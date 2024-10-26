@@ -23,7 +23,9 @@ export default function CreateRoomPage() {
     <Container>
       <Form id="roomNameForm" onSubmit={handleSubmit(handleCreateRoom)}>
         <Flex>
-          <FlexItem></FlexItem>
+          <FlexItem>
+            <Heading>ルーム作成</Heading>
+          </FlexItem>
           <FlexItem>
             <Label>
               <Input
@@ -78,6 +80,14 @@ const Container = styled.div`
   }
 `;
 
+const Heading = styled.h1`
+  margin: 0;
+  font-size: 2rem;
+  font-weight: bold;
+  color: rgba(56, 75, 112, 1);
+  text-align: center;
+`;
+
 const Form = styled.form`
   display: flex;
   justify-content: center;
@@ -97,7 +107,7 @@ const Flex = styled.div`
   flex-direction: column;
   flex-wrap: wrap;
   justify-content: space-between;
-  gap: 6rem;
+  gap: 4rem;
   max-width: 30rem;
   width: 100%;
 `;
