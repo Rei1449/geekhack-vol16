@@ -6,6 +6,12 @@ import uuid
 from typing import List
 from collections import defaultdict
 import json
+from dotenv import load_dotenv
+import os
+import psycopg2
+from psycopg2.extensions import connection
+
+load_dotenv()
 
 app = FastAPI()
 
@@ -65,6 +71,20 @@ rooms=[
     ]
 },
 ]
+
+def get_connection() -> connection:
+    return psycopg2.connect(os.getenv("DATABASE_URL"))
+
+@app.get("/test/get")
+async def get_test():
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM rooms")
+    print(cur.fetchall())
+    cur.close()
+    conn.close()
+    print("test")
+    return {"test": "test"}
 
 @app.get("/")
 async def root():
