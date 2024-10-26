@@ -121,6 +121,8 @@ async def room(room_id:str):
 
     return room_data
 
+faces = ['👍', '🥹', '🤩', '🤯', '😑', '🤔']
+
 #メッセージ新規作成
 @app.post("/rooms/{room_id}/messages")
 async def create_message(room_id:str, message_request:CreateMessageRequest):
@@ -133,12 +135,13 @@ async def create_message(room_id:str, message_request:CreateMessageRequest):
     }
     await manager.broadcast(room_id, json.dumps(message))
 
-    conn = get_connection()
-    cur = conn.cursor()
-    cur.execute(f"INSERT INTO messages (id,message,created_at,room_id) VALUES('{message['id']}','{message['message']}','{message['createdAt']}','{room_id}')")
-    conn.commit()
-    cur.close()
-    conn.close()
+    if message_request.message not in faces:
+        conn = get_connection()
+        cur = conn.cursor()
+        cur.execute(f"INSERT INTO messages (id,message,created_at,room_id) VALUES('{message['id']}','{message['message']}','{message['createdAt']}','{room_id}')")
+        conn.commit()
+        cur.close()
+        conn.close()
 
     return {
       "id": message_request.id,
