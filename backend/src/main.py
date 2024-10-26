@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 import os
 import psycopg2
 from psycopg2.extensions import connection
+from psycopg2 import pool
 
 load_dotenv()
 
@@ -40,11 +41,9 @@ class ConnectionManager:
             self.active_connections[room_id].append(websocket)
         else:
             self.active_connections[room_id] = [websocket]
-        print("active_connections", self.active_connections)
 
     def disconnect(self, websocket: WebSocket, room_id: str):
         self.active_connections[room_id].remove(websocket)
-        print("active_connections", self.active_connections)
 
     async def broadcast(self, room_id:str, message: str):
         for connection in self.active_connections[room_id]:
@@ -53,19 +52,24 @@ class ConnectionManager:
 
 manager = ConnectionManager()
 
-def get_connection() -> connection:
-    return psycopg2.connect(os.getenv("DATABASE_URL"))
+# コネクションプーリングで負荷を軽減
+db_pool = psycopg2.pool.SimpleConnectionPool(
+    1,  # 最小接続数
+    100,  # 最大接続数
+    os.getenv("DATABASE_URL")
+)
 
-@app.get("/test/get")
-async def get_test():
-    conn = get_connection()
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM rooms")
-    print(cur.fetchall())
-    cur.close()
-    conn.close()
-    print("test")
-    return {"test": "test"}
+def get_connection():
+    try:
+        conn = db_pool.getconn()
+        return conn
+    except Exception as e:
+        print(f"接続の取得に失敗しました: {e}")
+        return None
+
+def release_connection(conn):
+    if conn:
+        db_pool.putconn(conn)
 
 @app.get("/")
 async def root():
@@ -86,8 +90,7 @@ async def create_room(room_request:CreateRoomRequest):
     cur.execute(f"INSERT INTO rooms (id,name) VALUES('{room['id']}','{room['name']}')")
     conn.commit()
     cur.close()
-    conn.close()
-
+    release_connection(conn)
     return room
 
 #ルーム情報取得
@@ -97,7 +100,6 @@ async def room(room_id:str):
     cur = conn.cursor()
     cur.execute(f"SELECT name FROM rooms WHERE id = '{room_id}';")
     room_name = cur.fetchall()
-    print(room_name)
     if room_name == []:
         return None
     cur.execute(f"SELECT id,message,created_at FROM messages WHERE room_id = '{room_id}';")
@@ -117,7 +119,7 @@ async def room(room_id:str):
                 "createdAt": item[2]
             })
     cur.close()
-    conn.close()
+    release_connection(conn)
 
     return room_data
 
@@ -141,7 +143,7 @@ async def create_message(room_id:str, message_request:CreateMessageRequest):
         cur.execute(f"INSERT INTO messages (id,message,created_at,room_id) VALUES('{message['id']}','{message['message']}','{message['createdAt']}','{room_id}')")
         conn.commit()
         cur.close()
-        conn.close()
+        release_connection(conn)
 
     return {
       "id": message_request.id,
