@@ -45,7 +45,7 @@ export class RoomApi {
 
   observeRoom({ roomId, onMessage }: ObserveRoom) {
     const connection = new WebSocket(
-      `ws://${process.env.BACKEND_HOST}/rooms/${roomId}`,
+      `${process.env.BACKEND_WEBSOCKET_PROTOCOL}://${process.env.BACKEND_HOST}/rooms/${roomId}`,
     );
 
     // TODO: 接続時の処理
