@@ -53,25 +53,6 @@ class ConnectionManager:
 
 manager = ConnectionManager()
 
-rooms=[
-    {
-    "id": "abc",
-    "name": "name",
-    "messages": [
-        {
-            "id": "eee9a636-ea03-408e-86b6-5b75813a7d19",
-            "message": "Hello, World!",
-            "createdAt": 1729249549
-        },
-        {
-            "id": "eee9a636-ea03-408e-86b6-5b75813a7d19",
-            "message": "Goodbye, World!",
-            "createdAt": 1729249549
-        }
-    ]
-},
-]
-
 def get_connection() -> connection:
     return psycopg2.connect(os.getenv("DATABASE_URL"))
 
@@ -99,7 +80,6 @@ async def create_room(room_request:CreateRoomRequest):
       "name": room_request.name,
       "messages":[]
     }
-    rooms.append(room)
 
     conn = get_connection()
     cur = conn.cursor()
@@ -113,10 +93,33 @@ async def create_room(room_request:CreateRoomRequest):
 #ルーム情報取得
 @app.get("/rooms/{room_id}")
 async def room(room_id:str):
-    for room_item in rooms:
-        if room_item["id"] == room_id:
-            return room_item
-    return None
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(f"SELECT name FROM rooms WHERE id = '{room_id}';")
+    room_name = cur.fetchall()
+    print(room_name)
+    if room_name == []:
+        return None
+    cur.execute(f"SELECT id,message,created_at FROM messages WHERE room_id = '{room_id}';")
+    messages = cur.fetchall()
+
+    room_data = {
+        "id": room_id,
+        "name": room_name[0][0],
+        "messages": []
+    }
+
+    for item in messages:
+        room_data["messages"].append(
+            {
+                "id":item[0],
+                "message": item[1],
+                "createdAt": item[2]
+            })
+    cur.close()
+    conn.close()
+
+    return room_data
 
 #メッセージ新規作成
 @app.post("/rooms/{room_id}/messages")
@@ -130,9 +133,6 @@ async def create_message(room_id:str, message_request:CreateMessageRequest):
     }
     await manager.broadcast(room_id, json.dumps(message))
 
-    # for i in range(len(rooms)):
-    #     if rooms[i]["id"] == room_id:
-    #         rooms[i]["messages"].append(message)
     conn = get_connection()
     cur = conn.cursor()
     cur.execute(f"INSERT INTO messages (id,message,created_at,room_id) VALUES('{message['id']}','{message['message']}','{message['createdAt']}','{room_id}')")
