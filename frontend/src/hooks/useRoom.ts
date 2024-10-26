@@ -8,6 +8,7 @@ export const useRoom = ({ roomId }: { roomId: string }) => {
   const [room, setRoom] = useState<Room | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [moodPercentage, setMoodPercentage] = useState<number>(0);
+  const [isTutorialDone, setIsTutorialDone] = useState(false);
 
   const sendMessage = useCallback(
     async ({ value }: { value: string }) => {
@@ -93,10 +94,20 @@ export const useRoom = ({ roomId }: { roomId: string }) => {
     };
   }, [messages]);
 
+  // 盛り上がりが100%を超えたらチュートリアルを終了
+  useEffect(() => {
+    if (moodPercentage >= 100 && !isTutorialDone) {
+      setTimeout(() => {
+        setIsTutorialDone(true);
+      }, 5000);
+    }
+  }, [moodPercentage]);
+
   return {
     room,
     messages,
     sendMessage,
+    isTutorialDone,
     moodPercentage,
   };
 };
