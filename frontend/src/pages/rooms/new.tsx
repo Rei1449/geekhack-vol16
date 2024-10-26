@@ -55,11 +55,26 @@ export default function CreateRoomPage() {
 }
 
 const Container = styled.div`
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
   height: 100%;
+
+  background-image: url('/img/new-room-bg.png');
+  background-size: contain;
+  background-position: center;
+
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(10px);
+  }
 `;
 
 const Form = styled.form`
@@ -68,9 +83,12 @@ const Form = styled.form`
   align-items: center;
   width: 40%;
   height: 30%;
-  background: #a594f9;
+  background: rgba(56, 75, 112, 0.3);
   padding: 4rem;
   border-radius: 16px;
+
+  backdrop-filter: blur(10px);
+  box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.35);
 `;
 
 const Flex = styled.div`
@@ -100,8 +118,10 @@ const Input = styled.input`
   box-sizing: border-box;
   border: none;
   border-radius: 4px;
-  color: #363062;
-  background: #f5efff;
+
+  color: rgb(56, 75, 112);
+  background: #146c94;
+  background: rgba(80, 118, 135, 0.3);
 `;
 
 const ErrorMessage = styled.span`
@@ -129,7 +149,7 @@ const SubmitButton = styled.input`
   color: #f5efff;
   background: #363062;
   background: ${(props: React.InputHTMLAttributes<HTMLInputElement>) =>
-    props.disabled ? '#CDC1FF' : '#363062'};
+    props.disabled ? 'rgba(56, 75, 112, 0.2)' : 'rgba(56, 75, 112, 0.8)'};
   box-sizing: border-box;
   cursor: ${(props: React.InputHTMLAttributes<HTMLInputElement>) =>
     props.disabled ? 'not-allowed' : 'pointer'};
