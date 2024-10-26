@@ -39,7 +39,7 @@ export function Tutorial({
   }, [moodPercentage]);
 
   const tutorialText = useMemo(() => {
-    if (moodPercentage < 10) {
+    if (moodPercentage < 20) {
       return 'まずは、👍️ を押してみよう！';
     } else if (moodPercentage < 40) {
       return 'まだまだ行ける！';
@@ -53,7 +53,7 @@ export function Tutorial({
   }, [moodPercentage]);
 
   const tutorialTitle = useMemo(() => {
-    if (moodPercentage < 10) {
+    if (moodPercentage < 20) {
       return 'WELCOME!';
     } else if (moodPercentage < 40) {
       return 'ゲージを4メモリまで上げよう！';
