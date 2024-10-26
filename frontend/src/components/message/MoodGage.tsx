@@ -22,7 +22,8 @@ export function MoodGage({ percentage }: { percentage: number }) {
     <Wrapper>
       <MaxText
         style={{
-          color: percentage == 100 ? tickColors[tickColors.length-1] : '#D0D0D0',
+          color:
+            percentage == 100 ? tickColors[tickColors.length - 1] : '#D0D0D0',
         }}
       >
         Max

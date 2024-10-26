@@ -11,7 +11,9 @@ export default function RoomPage() {
   const router = useRouter();
   const { id } = useMemo(() => router.query, [router.query]);
   const [inputText, setInputText] = useState('');
-  const { room, messages, sendMessage } = useRoom({ roomId: id as string });
+  const { messages, sendMessage, moodPercentage } = useRoom({
+    roomId: id as string,
+  });
   const reactions = [...REACTION_TEXT.NEGATIVE, ...REACTION_TEXT.POSITIVE];
 
   const handleSendMessage = useCallback(() => {
@@ -64,7 +66,7 @@ export default function RoomPage() {
         </MessageFormWrapper>
       </FormWrapper>
       <MoodGageWrapper>
-        <MoodGage percentage={100} />
+        <MoodGage percentage={moodPercentage} />
       </MoodGageWrapper>
     </Wrapper>
   );

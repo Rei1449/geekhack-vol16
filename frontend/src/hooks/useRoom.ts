@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
 import { RoomApi } from 'src/data/RoomApi';
-import { Message } from 'src/models/Message';
+import { calcMoodPercentage, Message } from 'src/models/Message';
 import { Room } from 'src/models/Room';
 import { v4 as uuidv4 } from 'uuid';
 
 export const useRoom = ({ roomId }: { roomId: string }) => {
   const [room, setRoom] = useState<Room | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [moodPercentage, setMoodPercentage] = useState<number>(0);
 
   const sendMessage = useCallback(
     async ({ value }: { value: string }) => {
@@ -75,9 +76,27 @@ export const useRoom = ({ roomId }: { roomId: string }) => {
     };
   }, [room]);
 
+  // 盛り上がり度を1秒間隔で計算
+  useEffect(() => {
+    setMoodPercentage(
+      calcMoodPercentage({
+        messages,
+      }),
+    );
+
+    const interval = setInterval(() => {
+      setMoodPercentage(calcMoodPercentage({ messages }));
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [messages]);
+
   return {
     room,
     messages,
     sendMessage,
+    moodPercentage,
   };
 };
