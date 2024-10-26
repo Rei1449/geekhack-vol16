@@ -113,10 +113,33 @@ async def create_room(room_request:CreateRoomRequest):
 #ルーム情報取得
 @app.get("/rooms/{room_id}")
 async def room(room_id:str):
-    for room_item in rooms:
-        if room_item["id"] == room_id:
-            return room_item
-    return None
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(f"SELECT name FROM rooms WHERE id = '{room_id}';")
+    room_name = cur.fetchall()
+    print(room_name)
+    if room_name == []:
+        return None
+    cur.execute(f"SELECT id,message,created_at FROM messages WHERE room_id = '{room_id}';")
+    messages = cur.fetchall()
+
+    room_data = {
+        "id": room_id,
+        "name": room_name[0][0],
+        "messages": []
+    }
+
+    for item in messages:
+        room_data["messages"].append(
+            {
+                "id":item[0],
+                "message": item[1],
+                "createdAt": item[2]
+            })
+    cur.close()
+    conn.close()
+
+    return room_data 
 
 #メッセージ新規作成
 @app.post("/rooms/{room_id}/messages")
