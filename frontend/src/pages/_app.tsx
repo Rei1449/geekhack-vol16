@@ -1,4 +1,5 @@
 import type { AppProps } from 'next/app';
+import Head from 'next/head';
 
 declare module 'react' {
   interface StyleHTMLAttributes<T> extends React.HTMLAttributes<T> {
@@ -10,6 +11,9 @@ declare module 'react' {
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
+      <Head>
+        <title>ぎゅわーん</title>
+      </Head>
       <style jsx global>
         {`
           html,
