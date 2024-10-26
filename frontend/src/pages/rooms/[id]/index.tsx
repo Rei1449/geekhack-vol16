@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import { useCallback, useMemo, useState } from 'react';
 import { MessageDisplay } from 'src/components/message/MessageDisplay';
 import SendIcon from 'src/components/svg/send.svg';
-import { useRoom } from 'src/hooks/useRoom';
+import { useRoom } from 'src/hooks/Room';
 import { isEmoji, REACTION_TEXT } from 'src/models/Message';
 import styled from 'styled-components';
 
