@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 
 export function MoodGage({ percentage }: { percentage: number }) {
@@ -22,8 +22,7 @@ export function MoodGage({ percentage }: { percentage: number }) {
     <Wrapper>
       <MaxText
         style={{
-          color:
-            percentage == 100 ? tickColors[tickColors.length - 1] : '#D0D0D0',
+          color: percentage == 100 ? tickColors[tickColors.length-1] : '#D0D0D0',
         }}
       >
         Max
@@ -34,7 +33,7 @@ export function MoodGage({ percentage }: { percentage: number }) {
           return (
             <GageTick
               key={index}
-              tickColor={isFilled ? tickColors[index] : '#D0D0D0'}
+              $tickColor={isFilled ? tickColors[index] : '#D0D0D0'}
             />
           );
         })}
@@ -64,10 +63,10 @@ const GageStack = styled.div`
   width: 100%;
 `;
 
-const GageTick = styled.div<{ tickColor?: string }>`
+const GageTick = styled.div<{ $tickColor?: string }>`
   width: 100%;
   height: 10px;
   border-radius: 10px;
-  background-color: ${({ tickColor }) => tickColor || '#d0d0d0'};
-  box-shadow: 0 0 2px ${({ tickColor }) => tickColor || '#d0d0d0'};
+  background-color: ${({ $tickColor }) => $tickColor || '#d0d0d0'};
+  box-shadow: 0 0 2px ${({ $tickColor }) => $tickColor || '#d0d0d0'};
 `;
