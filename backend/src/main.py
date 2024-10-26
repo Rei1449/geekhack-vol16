@@ -119,7 +119,7 @@ async def room(room_id:str):
     cur.close()
     conn.close()
 
-    return room_data 
+    return room_data
 
 #メッセージ新規作成
 @app.post("/rooms/{room_id}/messages")
