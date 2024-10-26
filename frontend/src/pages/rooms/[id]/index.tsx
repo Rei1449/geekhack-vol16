@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 import { useCallback, useMemo, useState } from 'react';
 import { MessageDisplay } from 'src/components/message/MessageDisplay';
 import SendIcon from 'src/components/svg/send.svg';
+import { Size } from 'src/constants/Size';
 import { useRoom } from 'src/hooks/useRoom';
 import { isEmoji, REACTION_TEXT } from 'src/models/Message';
 import styled from 'styled-components';
@@ -81,8 +82,8 @@ const FormWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 16px;
-  gap: 8px;
+  padding: ${Size.Room.Form.padding}px;
+  gap: ${Size.Room.Form.gap}px;
 
   position: fixed;
   bottom: 0;
@@ -99,7 +100,7 @@ const MessageFormWrapper = styled.div`
 
 const MessageFormInputArea = styled.div`
   flex: 1;
-  height: 50px;
+  height: ${Size.Room.Form.MessageArea.height}px;
   display: flex;
 
   background-color: white;
@@ -148,8 +149,8 @@ const ReactionButtonStack = styled.div`
 
 const BaseReactionButton = styled.button`
   cursor: pointer;
-  width: 48px;
-  height: 48px;
+  width: ${Size.Room.Form.ReactionButton.height}px;
+  height: ${Size.Room.Form.ReactionButton.height}px;
   padding: 2px;
   border-radius: 20px;
   background-color: white;
