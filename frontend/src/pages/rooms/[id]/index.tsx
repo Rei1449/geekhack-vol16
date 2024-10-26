@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 import { useCallback, useMemo, useState } from 'react';
 import { MessageDisplay } from 'src/components/message/MessageDisplay';
 import { MoodGage } from 'src/components/message/MoodGage';
+import { Tutorial } from 'src/components/message/Tutorial';
 import SendIcon from 'src/components/svg/send.svg';
 import { useRoom } from 'src/hooks/useRoom';
 import { isEmoji, REACTION_TEXT } from 'src/models/Message';
@@ -32,6 +33,7 @@ export default function RoomPage() {
   return (
     <Wrapper>
       <MessageDisplay messages={messages} />
+      <Tutorial isVisible={true} moodPercentage={moodPercentage} />
       <FormWrapper>
         <ReactionButtonStack>
           {reactions.map((reaction, index) =>
