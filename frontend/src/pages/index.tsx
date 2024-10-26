@@ -28,7 +28,7 @@ export default function CreateRoomPage() {
             <Flex>
               <FlexItem>
                 <HeroHeading>
-                  <HeroImage src="/img/hero-icon.png" />
+                  <HeroIcon src="/img/hero-icon.png" />
                   <Heading>ぎゅわ〜ん</Heading>
                 </HeroHeading>
               </FlexItem>
@@ -66,7 +66,7 @@ export default function CreateRoomPage() {
         </HeroItemLeft>
         <HeroItemRight>
           <ImageContent>
-            <Image src="/img/hero-image.png" />
+            <HeroImage src="/img/hero-image.png" />
           </ImageContent>
         </HeroItemRight>
       </HeroStack>
@@ -109,7 +109,7 @@ const HeroHeading = styled.div`
   display: flex;
 `;
 
-const HeroImage = styled.img`
+const HeroIcon = styled.img`
   width: 76px;
   height: 76px;
 `;
@@ -216,7 +216,7 @@ const ImageContent = styled.div`
   height: 100%;
 `;
 
-const Image = styled.img`
+const HeroImage = styled.img`
   width: 100%;
   height: min-content;
   border-radius: 60px;
