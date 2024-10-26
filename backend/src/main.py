@@ -64,8 +64,7 @@ def get_connection():
         conn = db_pool.getconn()
         return conn
     except Exception as e:
-        print(f"接続の取得に失敗しました: {e}")
-        return None
+        raise e
 
 def release_connection(conn):
     if conn:
