@@ -53,25 +53,6 @@ class ConnectionManager:
 
 manager = ConnectionManager()
 
-rooms=[
-    {
-    "id": "abc",
-    "name": "name",
-    "messages": [
-        {
-            "id": "eee9a636-ea03-408e-86b6-5b75813a7d19",
-            "message": "Hello, World!",
-            "createdAt": 1729249549
-        },
-        {
-            "id": "eee9a636-ea03-408e-86b6-5b75813a7d19",
-            "message": "Goodbye, World!",
-            "createdAt": 1729249549
-        }
-    ]
-},
-]
-
 def get_connection() -> connection:
     return psycopg2.connect(os.getenv("DATABASE_URL"))
 
@@ -99,7 +80,6 @@ async def create_room(room_request:CreateRoomRequest):
       "name": room_request.name,
       "messages":[]
     }
-    rooms.append(room)
 
     conn = get_connection()
     cur = conn.cursor()
