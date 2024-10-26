@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import { useCallback, useMemo, useState } from 'react';
 import { MessageDisplay } from 'src/components/message/MessageDisplay';
+import { MoodGage } from 'src/components/message/MoodGage';
 import SendIcon from 'src/components/svg/send.svg';
 import { useRoom } from 'src/hooks/useRoom';
 import { isEmoji, REACTION_TEXT } from 'src/models/Message';
@@ -28,7 +29,6 @@ export default function RoomPage() {
 
   return (
     <Wrapper>
-      <RoomName>Room: {room?.name}</RoomName>
       <MessageDisplay messages={messages} />
       <FormWrapper>
         <ReactionButtonStack>
@@ -63,6 +63,9 @@ export default function RoomPage() {
           </MessageSendButton>
         </MessageFormWrapper>
       </FormWrapper>
+      <MoodGageWrapper>
+        <MoodGage percentage={100} />
+      </MoodGageWrapper>
     </Wrapper>
   );
 }
@@ -70,11 +73,13 @@ export default function RoomPage() {
 const Wrapper = styled.div`
   width: 100%;
   height: 100%;
+  position: relative;
 `;
 
-const RoomName = styled.div`
-  font-size: 24px;
-  font-weight: 500;
+const MoodGageWrapper = styled.div`
+  position: absolute;
+  top: 8px;
+  left: 16px;
 `;
 
 const FormWrapper = styled.div`
