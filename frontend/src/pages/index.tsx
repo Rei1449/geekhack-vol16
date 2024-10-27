@@ -65,9 +65,9 @@ export default function CreateRoomPage() {
           </Form>
         </HeroItemLeft>
         <HeroItemRight>
-          <ImageContent>
-            <HeroImage src="/img/hero-image.png" />
-          </ImageContent>
+          <MainVisualContainer>
+            <MainVisual src="/img/main-visual.png" />
+          </MainVisualContainer>
         </HeroItemRight>
       </HeroStack>
     </Container>
@@ -207,7 +207,7 @@ const SubmitButton = styled.input`
   transition: all 0.4s;
 `;
 
-const ImageContent = styled.div`
+const MainVisualContainer = styled.div`
   display: flex;
   align-items: center;
 
@@ -216,7 +216,7 @@ const ImageContent = styled.div`
   height: 100%;
 `;
 
-const HeroImage = styled.img`
+const MainVisual = styled.img`
   width: 100%;
   height: min-content;
   border-radius: 60px;
