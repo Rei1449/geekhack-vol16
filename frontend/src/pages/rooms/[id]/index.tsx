@@ -57,6 +57,11 @@ export default function RoomPage() {
 
   return (
     <Wrapper>
+      {room && isTutorialDone && (
+        <RoomNameWrapper>
+          <RoomName>{room.name}</RoomName>
+        </RoomNameWrapper>
+      )}
       <MessageDisplay messages={messages} />
       <Tutorial
         isVisible={!!room && !isTutorialDone}
@@ -108,6 +113,7 @@ const Wrapper = styled.div`
   width: 100%;
   height: 100%;
   position: relative;
+  background-color: #f0f0f0;
 `;
 
 const MoodGageWrapper = styled.div`
@@ -215,4 +221,18 @@ const PhraseReactionButton = styled(BaseReactionButton)`
   width: auto;
   white-space: nowrap;
   padding-inline: 6px;
+`;
+
+const RoomNameWrapper = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+`;
+
+const RoomName = styled.div`
+  font-size: 64px;
+  font-weight: bold;
+  color: rgba(0, 0, 0, 0.1);
+  z-index: 1;
 `;
