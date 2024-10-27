@@ -122,7 +122,7 @@ async def room(room_id:str):
 
     return room_data
 
-faces = ['👍', '🥹', '🤩', '🤯', '😑', '🤔']
+faces = ['👍', '😁', '🤩', '🤯', '😑', '🤔']
 
 #メッセージ新規作成
 @app.post("/rooms/{room_id}/messages")
