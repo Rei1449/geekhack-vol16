@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MessageDisplay } from 'src/components/message/MessageDisplay';
 import { MoodGage } from 'src/components/message/MoodGage';
 import { Tutorial } from 'src/components/message/Tutorial';
@@ -13,17 +13,23 @@ export default function RoomPage() {
   const router = useRouter();
   const { id } = useMemo(() => router.query, [router.query]);
   const [inputText, setInputText] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
   const { room, messages, sendMessage, isTutorialDone, moodPercentage } =
     useRoom({
       roomId: id as string,
     });
   const reactions = [...REACTION_TEXT.NEGATIVE, ...REACTION_TEXT.POSITIVE];
 
-  const handleSendMessage = useCallback(() => {
-    if (inputText === '') return;
-    sendMessage({ value: inputText });
-    setInputText('');
-  }, [inputText, sendMessage]);
+  const handleSendMessage = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      if (inputText === '') return;
+      sendMessage({ value: inputText });
+      setInputText('');
+      inputRef.current?.focus(); // input要素にfocusを戻す
+    },
+    [inputText, sendMessage],
+  );
 
   const handleSendReaction = useCallback(
     ({ reaction }: { reaction: string }) => {
@@ -31,6 +37,23 @@ export default function RoomPage() {
     },
     [sendMessage],
   );
+
+  // 常にinput要素にfocusが当たるように
+  useEffect(() => {
+    inputRef.current?.focus();
+    // inputからfocusが外れたとき、tabキーを押したらinput要素にfocusが戻るようにする
+    const handleTabPress = (e: KeyboardEvent) => {
+      if (e.key === 'Tab') {
+        inputRef.current?.focus(); // input要素にfocusを戻す
+        e.preventDefault();
+      }
+    };
+
+    window.addEventListener('keydown', handleTabPress);
+    return () => {
+      window.removeEventListener('keydown', handleTabPress);
+    };
+  }, []);
 
   return (
     <Wrapper>
@@ -60,16 +83,18 @@ export default function RoomPage() {
           )}
         </ReactionButtonStack>
         <MessageFormWrapper>
-          <MessageFormInputArea>
+          <MessageForm onSubmit={handleSendMessage}>
             <MessageFormInput
+              ref={inputRef}
+              type="text"
               placeholder="メッセージを入力"
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
             />
-          </MessageFormInputArea>
-          <MessageSendButton onClick={handleSendMessage}>
-            <SendIcon color="#444444" style={{ userSelect: 'none' }} />
-          </MessageSendButton>
+            <MessageFormSubmitButton type="submit">
+              <SendIcon color="#444444" style={{ userSelect: 'none' }} />
+            </MessageFormSubmitButton>
+          </MessageForm>
         </MessageFormWrapper>
       </FormWrapper>
       <MoodGageWrapper>
@@ -111,16 +136,17 @@ const MessageFormWrapper = styled.div`
   max-width: 100%;
 `;
 
-const MessageFormInputArea = styled.div`
+const MessageForm = styled.form`
   flex: 1;
-  height: ${Size.Room.Form.MessageArea.height}px;
   display: flex;
 
+  height: ${Size.Room.Form.MessageArea.height}px;
+  padding: 4px 16px;
+
   background-color: white;
+  border: 1px solid rgba(100, 100, 100, 0.1);
   border-radius: 50px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
   box-shadow: 10px 10px 0 rgb(156 160 160 / 40%);
-  padding: 0 16px;
 `;
 
 const MessageFormInput = styled.input`
@@ -133,25 +159,29 @@ const MessageFormInput = styled.input`
   }
 `;
 
-const MessageSendButton = styled.button`
+const MessageFormSubmitButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 50px;
-  width: 50px;
-  transition: all 0.3s;
 
-  background-color: white;
-  box-shadow: 10px 10px 0 rgb(156 160 160 / 40%);
-  border-radius: 50%;
-  border: none;
+  width: 50px;
+  height: 50px;
+
   color: white;
+  background-color: white;
+  border: none;
+  border-radius: 50%;
   font-size: 24px;
   font-weight: 500;
   cursor: pointer;
 
+  transition: all 0.3s;
+
   &:active {
     transform: scale(0.5);
+  }
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.1);
   }
 `;
 
