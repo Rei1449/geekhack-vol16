@@ -5,7 +5,7 @@ export type Message = {
 };
 
 export const REACTION_TEXT = {
-  POSITIVE: ['👍', '🥹', '🤩', 'わかる'] as const,
+  POSITIVE: ['👍', '😁', '🤩', 'わかる'] as const,
   NEGATIVE: ['わからん', '🤯', '😑', '🤔'] as const,
 };
 
