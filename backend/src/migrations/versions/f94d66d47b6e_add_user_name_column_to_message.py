@@ -19,7 +19,7 @@ def upgrade() -> None:
     op.execute(
         """
         ALTER TABLE messages 
-        ADD COLUMN user_name TEXT AFTER created_at;
+        ADD COLUMN user_name TEXT;
         """
     )
 
