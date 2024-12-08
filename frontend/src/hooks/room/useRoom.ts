@@ -104,7 +104,7 @@ export const useRoom = ({ roomId }: { roomId: string }) => {
     return () => {
       clearInterval(interval);
     };
-  }, [room?.messages ?? []]);
+  }, [room?.messages]);
 
   // 盛り上がりが100%を超えたらチュートリアルを終了
   useEffect(() => {
