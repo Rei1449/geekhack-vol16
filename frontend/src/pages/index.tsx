@@ -3,6 +3,9 @@ import { HStack } from 'src/components/common/HStack';
 import { VStack } from 'src/components/common/VStack';
 import { useRoomCreate } from 'src/hooks/room';
 import styled from 'styled-components';
+import { Yusei_Magic } from '@next/font/google';
+
+const yuseimagic = Yusei_Magic({ weight: ['400'], subsets: ['latin'] });
 
 type CreateRoomNameField = {
   roomName: string;
@@ -139,6 +142,7 @@ const Heading = styled.h1`
   margin: 0;
   font-size: 3.2rem;
   font-weight: bold;
+  font-family: ${yuseimagic.style.fontFamily};
 
   background: linear-gradient(135deg, #e639f5, #005dff);
   -webkit-background-clip: text;
