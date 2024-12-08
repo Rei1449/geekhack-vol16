@@ -1,3 +1,4 @@
+import { Yusei_Magic } from '@next/font/google';
 import { useEffect, useState } from 'react';
 import { Message } from 'src/models/Message';
 import {
@@ -6,6 +7,8 @@ import {
   updateAnimationParams,
 } from 'src/models/MessageWithAnimation';
 import styled from 'styled-components';
+
+const yuseimagic = Yusei_Magic({ weight: ['400'], subsets: ['latin'] });
 
 export const MessageDisplay = ({
   messages: defaultMessages,
@@ -62,6 +65,7 @@ export const MessageDisplay = ({
           key={index}
           style={{
             fontSize: 64,
+            fontFamily: yuseimagic.style.fontFamily,
             opacity: message.animationParams.opacity,
             position: 'absolute',
             top: message.animationParams.position.y,
