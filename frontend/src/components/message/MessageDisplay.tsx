@@ -20,14 +20,16 @@ export const MessageDisplay = ({
   // 新規メッセージを追加
   useEffect(() => {
     setMessages((prev) => {
-      const newMessages = defaultMessages.filter((message) => {
-        const isExist = prev.find(
-          (prevMessage) => prevMessage.id === message.id,
-        );
-        return !isExist;
-      }).filter((message) => {
-        return message.createdAt > Date.now()/1000-10;
-      });
+      const newMessages = defaultMessages
+        .filter((message) => {
+          const isExist = prev.find(
+            (prevMessage) => prevMessage.id === message.id,
+          );
+          return !isExist;
+        })
+        .filter((message) => {
+          return message.createdAt > Date.now() / 1000 - 10;
+        });
 
       prev.push(
         ...newMessages.map((message) =>

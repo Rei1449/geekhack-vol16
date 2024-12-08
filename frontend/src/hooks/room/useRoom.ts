@@ -18,10 +18,10 @@ export const useRoom = ({ roomId }: { roomId: string }) => {
       };
 
       setRoom((prev) => {
-        if(prev){
-          return{
+        if (prev) {
+          return {
             ...prev,
-            messages:[...prev.messages,message],
+            messages: [...prev.messages, message],
           };
         }
         return prev;
@@ -39,15 +39,15 @@ export const useRoom = ({ roomId }: { roomId: string }) => {
 
   const pushMessage = useCallback((message: Message) => {
     setRoom((prev) => {
-      if(prev){
+      if (prev) {
         // 自分で送信したメッセージはすでに追加されている
         const isAlreadyExist = prev.messages.some((m) => m.id === message.id);
         if (isAlreadyExist) {
           return prev;
         }
-        return{
+        return {
           ...prev,
-          messages:[...prev.messages,message],
+          messages: [...prev.messages, message],
         };
       }
       return prev;
@@ -93,18 +93,18 @@ export const useRoom = ({ roomId }: { roomId: string }) => {
   useEffect(() => {
     setMoodPercentage(
       calcMoodPercentage({
-        messages: room?.messages??[],
+        messages: room?.messages ?? [],
       }),
     );
 
     const interval = setInterval(() => {
-      setMoodPercentage(calcMoodPercentage({  messages: room?.messages??[] }));
+      setMoodPercentage(calcMoodPercentage({ messages: room?.messages ?? [] }));
     }, 1000);
 
     return () => {
       clearInterval(interval);
     };
-  }, [room?.messages??[]]);
+  }, [room?.messages ?? []]);
 
   // 盛り上がりが100%を超えたらチュートリアルを終了
   useEffect(() => {
@@ -117,7 +117,7 @@ export const useRoom = ({ roomId }: { roomId: string }) => {
 
   return {
     room,
-    messages: room?.messages??[],
+    messages: room?.messages ?? [],
     sendMessage,
     isTutorialDone,
     moodPercentage,
