@@ -25,6 +25,8 @@ export const MessageDisplay = ({
           (prevMessage) => prevMessage.id === message.id,
         );
         return !isExist;
+      }).filter((message) => {
+        return message.createdAt > Date.now()/1000-10;
       });
 
       prev.push(
