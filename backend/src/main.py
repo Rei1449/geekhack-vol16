@@ -103,7 +103,6 @@ async def room(room_id:str):
         return None
     cur.execute(f"SELECT id,message,created_at FROM messages WHERE room_id = '{room_id}';")
     messages = cur.fetchall()
-    score = message_score(item[1])
 
     room_data = {
         "id": room_id,
@@ -117,7 +116,7 @@ async def room(room_id:str):
                 "id":item[0],
                 "message": item[1],
                 "createdAt": item[2],
-                "score": score
+                "score": message_score(item[1])
             })
     cur.close()
     release_connection(conn)
