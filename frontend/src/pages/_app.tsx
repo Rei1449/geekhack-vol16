@@ -8,8 +8,6 @@ declare module 'react' {
   }
 }
 
-// const yuseimagic = Yusei_Magic({ weight: ['400'], subsets: ['latin'] });
-
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
