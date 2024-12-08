@@ -11,6 +11,7 @@ import os
 import psycopg2
 from psycopg2.extensions import connection
 from psycopg2 import pool
+from typing import Optional
 
 load_dotenv()
 
@@ -30,6 +31,7 @@ class CreateRoomRequest(BaseModel):
 class CreateMessageRequest(BaseModel):
     id: str
     message: str
+    user_name: Optional[str] = None
 
 class ConnectionManager:
     def __init__(self):
@@ -101,7 +103,7 @@ async def room(room_id:str):
     room_name = cur.fetchall()
     if room_name == []:
         return None
-    cur.execute(f"SELECT id,message,created_at FROM messages WHERE room_id = '{room_id}';")
+    cur.execute(f"SELECT id,message,created_at,user_name FROM messages WHERE room_id = '{room_id}';")
     messages = cur.fetchall()
 
     room_data = {
@@ -116,6 +118,7 @@ async def room(room_id:str):
                 "id":item[0],
                 "message": item[1],
                 "createdAt": item[2],
+                "user_name":item[3],
                 "score": message_score(item[1])
             })
     cur.close()
@@ -135,6 +138,7 @@ async def create_message(room_id:str, message_request:CreateMessageRequest):
       "id": message_request.id,
       "message": message_request.message,
       "createdAt": now,
+      "user_name": message_request.user_name,
       "score": score
     }
     await manager.broadcast(room_id, json.dumps(message))
@@ -142,17 +146,12 @@ async def create_message(room_id:str, message_request:CreateMessageRequest):
     if message_request.message not in faces:
         conn = get_connection()
         cur = conn.cursor()
-        cur.execute(f"INSERT INTO messages (id,message,created_at,room_id) VALUES('{message['id']}','{message['message']}','{message['createdAt']}','{room_id}')")
+        cur.execute(f"INSERT INTO messages (id,message,created_at,room_id,user_name) VALUES('{message['id']}','{message['message']}','{message['createdAt']}','{room_id}','{message['user_name']}')")
         conn.commit()
         cur.close()
         release_connection(conn)
 
-    return {
-      "id": message_request.id,
-      "message": message_request.message,
-      "createdAt": now,
-      "score": score
-    }
+    return message
 
 @app.websocket("/rooms/{room_id}")
 async def connect_websocket(websocket: WebSocket, room_id: str):
