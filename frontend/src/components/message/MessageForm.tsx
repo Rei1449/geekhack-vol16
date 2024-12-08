@@ -7,10 +7,12 @@ import styled from 'styled-components';
 
 export function MessageForm({
   reactions,
+  onOpenMessageHistory,
   onSendReaction,
   onSendMessage,
 }: {
   reactions: string[];
+  onOpenMessageHistory: () => void;
   onSendReaction: (params: { reaction: string }) => void;
   onSendMessage: (value: string) => void;
 }) {
@@ -67,7 +69,7 @@ export function MessageForm({
         )}
       </ReactionButtonStack>
       <MessageFormWrapper>
-        <ShowMessageListButton>
+        <ShowMessageListButton onClick={onOpenMessageHistory}>
           <CommentIcon />
         </ShowMessageListButton>
         <MessageFormComponent onSubmit={handleSendMessage}>

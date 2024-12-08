@@ -1,7 +1,8 @@
 import { useRouter } from 'next/router';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { MessageDisplay } from 'src/components/message/MessageDisplay';
 import { MessageForm } from 'src/components/message/MessageForm';
+import { MessageHistory } from 'src/components/message/MessageHistory';
 import { MoodGage } from 'src/components/message/MoodGage';
 import { Tutorial } from 'src/components/message/Tutorial';
 import { useRoom } from 'src/hooks/room';
@@ -16,6 +17,7 @@ export default function RoomPage() {
       roomId: id as string,
     });
   const reactions = [...REACTION_TEXT.NEGATIVE, ...REACTION_TEXT.POSITIVE];
+  const [isOpenMessageDialog, setIsOpenMessageDialog] = useState(false);
 
   const handleSendMessage = useCallback(
     (value: string) => {
@@ -45,12 +47,18 @@ export default function RoomPage() {
       />
       <MessageForm
         reactions={reactions}
+        onOpenMessageHistory={() => setIsOpenMessageDialog(true)}
         onSendMessage={handleSendMessage}
         onSendReaction={handleSendReaction}
       />
       <MoodGageWrapper>
         <MoodGage percentage={moodPercentage} />
       </MoodGageWrapper>
+      <MessageHistory
+        isOpen={isOpenMessageDialog}
+        onClickOutside={() => setIsOpenMessageDialog(false)}
+        onClose={() => setIsOpenMessageDialog(false)}
+      />
     </Wrapper>
   );
 }
