@@ -165,7 +165,7 @@ async def connect_websocket(websocket: WebSocket, room_id: str):
         print("websocket disconnected", websocket)
 
 def message_score(message):
-    if "?" in message:
+    if "?" in message or "？" in message:
         return 1
     else:
         return -1
