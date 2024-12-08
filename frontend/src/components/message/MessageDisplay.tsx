@@ -12,8 +12,10 @@ const yuseimagic = Yusei_Magic({ weight: ['400'], subsets: ['latin'] });
 
 export const MessageDisplay = ({
   messages: defaultMessages,
+  bufferDurationInSec = 10
 }: {
   messages: Message[];
+  bufferDurationInSec: number;
 }) => {
   const [messages, setMessages] = useState<MessageWithAnimation[]>([]);
 
@@ -28,7 +30,7 @@ export const MessageDisplay = ({
           return !isExist;
         })
         .filter((message) => {
-          return message.createdAt > Date.now() / 1000 - 10;
+          return message.createdAt > Date.now() / 1000 - bufferDurationInSec;
         });
 
       prev.push(
