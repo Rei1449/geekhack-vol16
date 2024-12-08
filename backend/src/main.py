@@ -103,6 +103,7 @@ async def room(room_id:str):
         return None
     cur.execute(f"SELECT id,message,created_at FROM messages WHERE room_id = '{room_id}';")
     messages = cur.fetchall()
+    score = message_score(item[1])
 
     room_data = {
         "id": room_id,
@@ -115,7 +116,8 @@ async def room(room_id:str):
             {
                 "id":item[0],
                 "message": item[1],
-                "createdAt": item[2]
+                "createdAt": item[2],
+                "score": score
             })
     cur.close()
     release_connection(conn)
@@ -128,11 +130,13 @@ faces = ['👍', '😁', '🤩', '🤯', '😑', '🤔']
 @app.post("/rooms/{room_id}/messages")
 async def create_message(room_id:str, message_request:CreateMessageRequest):
     now = int(time.time())
+    score = message_score(message_request.message)
     message = {
       "type":"messages/new",
       "id": message_request.id,
       "message": message_request.message,
-      "createdAt": now
+      "createdAt": now,
+      "score": score
     }
     await manager.broadcast(room_id, json.dumps(message))
 
@@ -147,7 +151,8 @@ async def create_message(room_id:str, message_request:CreateMessageRequest):
     return {
       "id": message_request.id,
       "message": message_request.message,
-      "createdAt": now
+      "createdAt": now,
+      "score": score
     }
 
 @app.websocket("/rooms/{room_id}")
@@ -159,3 +164,9 @@ async def connect_websocket(websocket: WebSocket, room_id: str):
     except WebSocketDisconnect:
         manager.disconnect(websocket, room_id)
         print("websocket disconnected", websocket)
+
+def message_score(message):
+    if "?" in message:
+        return 1
+    else:
+        return -1
