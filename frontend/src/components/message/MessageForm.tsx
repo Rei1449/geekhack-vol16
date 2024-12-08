@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import CommentIcon from 'src/components/svg/comment.svg';
 import SendIcon from 'src/components/svg/send.svg';
 import { Size } from 'src/constants/Size';
 import { isEmoji } from 'src/models/Message';
@@ -66,6 +67,9 @@ export function MessageForm({
         )}
       </ReactionButtonStack>
       <MessageFormWrapper>
+        <ShowMessageListButton>
+          <CommentIcon />
+        </ShowMessageListButton>
         <MessageFormComponent onSubmit={handleSendMessage}>
           <MessageFormInput
             ref={inputRef}
@@ -74,10 +78,10 @@ export function MessageForm({
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
           />
-          <MessageFormSubmitButton type="submit">
-            <SendIcon color="#444444" style={{ userSelect: 'none' }} />
-          </MessageFormSubmitButton>
         </MessageFormComponent>
+        <MessageFormSubmitButton type="submit">
+          <SendIcon color="#444444" style={{ userSelect: 'none' }} />
+        </MessageFormSubmitButton>
       </MessageFormWrapper>
     </FormWrapper>
   );
@@ -107,6 +111,7 @@ const MessageFormComponent = styled.form`
   flex: 1;
   display: flex;
 
+  box-sizing: border-box;
   height: ${Size.Room.Form.MessageArea.height}px;
   padding: 4px 16px;
 
@@ -126,31 +131,35 @@ const MessageFormInput = styled.input`
   }
 `;
 
-const MessageFormSubmitButton = styled.button`
+const CircleButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
 
-  width: 50px;
-  height: 50px;
-
-  color: white;
+  width: ${Size.Room.Form.ReactionButton.height}px;
+  height: ${Size.Room.Form.ReactionButton.height}px;
   background-color: white;
   border: none;
   border-radius: 50%;
-  font-size: 24px;
-  font-weight: 500;
+  box-shadow: 5px 5px 0 rgb(156 160 160 / 40%);
   cursor: pointer;
-
   transition: all 0.3s;
 
   &:active {
-    transform: scale(0.5);
+    transform: scale(0.9);
   }
   &:hover {
     background-color: rgba(0, 0, 0, 0.1);
   }
 `;
+
+const MessageFormSubmitButton = styled(CircleButton)`
+  &:active {
+    transform: scale(0.5);
+  }
+`;
+
+const ShowMessageListButton = styled(CircleButton)``;
 
 const ReactionButtonStack = styled.div`
   display: flex;
