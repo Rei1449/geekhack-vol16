@@ -1,5 +1,6 @@
 import {
   IAgoraRTCClient,
+  IAgoraRTCRemoteUser,
   ILocalVideoTrack,
   IRemoteVideoTrack,
 } from 'agora-rtc-sdk-ng';
@@ -13,73 +14,126 @@ export const useScreenShare = ({
   uid: string;
 }) => {
   const clientRef = useRef<IAgoraRTCClient | null>(null);
-  
+
   const [isHost, setIsHost] = useState(false);
   const [screenTrack, setScreenTrack] = useState<
     ILocalVideoTrack | IRemoteVideoTrack | null
   >(null);
 
   const startScreenShare = useCallback(async () => {
-    if(!roomId) return;
-    if(!clientRef.current) return;
+    if (!roomId) return;
+    if (!clientRef.current) return;
+
+    // 切断中は接続できない
+    const isDisconnecting = clientRef.current.connectionState === 'DISCONNECTING';
+    if (isDisconnecting) {
+      return;
+    }
 
     setIsHost(true);
 
     try {
-      clientRef.current.join(process.env.AGORA_APP_ID!, roomId, null, uid);
-      const AgoraRTC = (await import('agora-rtc-sdk-ng')).default; 
+      const AgoraRTC = (await import('agora-rtc-sdk-ng')).default;
       const screenTrack = (await AgoraRTC.createScreenVideoTrack({
         displaySurface: 'window',
+        encoderConfig: '720p_1',
+        optimizationMode: 'motion',
       })) as ILocalVideoTrack;
       setScreenTrack(screenTrack);
 
       await clientRef.current.publish(screenTrack);
     } catch (error) {
       console.error(error);
+      setScreenTrack(null);
+      setIsHost(false);
     }
   }, [roomId, uid]);
 
   const stopScreenShare = useCallback(async () => {
+    setIsHost(false);
+
     if (!clientRef.current) return;
     if (!screenTrack) return;
 
     try {
-      (screenTrack as ILocalVideoTrack).stop(); 
+      (screenTrack as ILocalVideoTrack).stop();
       (screenTrack as ILocalVideoTrack).close();
       await clientRef.current.unpublish(screenTrack as ILocalVideoTrack);
+    } catch (error) {
+      console.error({
+        tag: 'useScreenShare',
+        action: 'stopScreenShare',
+        error,
+      });
+    } finally {
       setScreenTrack(null);
       setIsHost(false);
-    } catch (error) {
-      console.error(error);
     }
   }, [isHost, screenTrack]);
 
-  // 参加者として画面共有に参加
-  const joinAsViewer = useCallback(async () => {
-    if (!clientRef.current) return;
+  const handleUserPublished = useCallback(
+    async (
+      user: IAgoraRTCRemoteUser,
+      mediaType: 'audio' | 'video' | 'datachannel',
+    ) => {
+      console.log({ tag: 'useScreenShare', action: 'user-published', isHost });
+     
+      // ホストの場合は何もしない
+      if (isHost) return;
 
-    setIsHost(false);
-    try {
-      clientRef.current.join(process.env.AGORA_APP_ID!, roomId, null, uid);
-      clientRef.current.on('user-published', async (user, mediaType) => {
-        console.log('user-published');
-        if(clientRef.current === null) return;
-        await clientRef.current.subscribe(user, mediaType);
-        if (mediaType === 'video') {
-          const remoteScreenTrack = user.videoTrack;
-          if (!remoteScreenTrack) return;
-          setScreenTrack(remoteScreenTrack);
-        }
-      });
+      // 画面共有のみを受信する
+      if(mediaType !== 'video') return;
 
-      clientRef.current.on('user-unpublished', () => {
-        if (!screenTrack) return;
-        setScreenTrack(null);
-      });
-    } catch (error) {
-      console.error(`Failed to join as viewer: ${error}`);
-    }
+      const client = clientRef.current;
+      if (!client) return;
+      
+      await client.subscribe(user, mediaType);
+
+      const remoteScreenTrack = user.videoTrack;
+      if (!remoteScreenTrack) return;
+      setScreenTrack(remoteScreenTrack);
+    },
+    [],
+  );
+
+  const handleUserUnpublished = useCallback(() => {
+    console.log({ tag: 'useScreenShare', action: 'user-unpublished' });
+    setScreenTrack(null);
   }, []);
+
+  const joinRoom = useCallback(
+    async ({
+      roomId,
+      uid,
+      client,
+    }: {
+      roomId: string | null;
+      uid: string | null;
+      client: IAgoraRTCClient;
+    }) => {
+      if (!roomId || !uid) return;
+
+      try {
+        const isJoined = client.connectionState === 'CONNECTED';
+        if (isJoined) {
+          console.log({ tag: 'useScreenShare', action: 'already-joined-and-leave' });
+          await client.leave();
+        }
+        
+        console.log({ tag: 'useScreenShare', action: 'joinRoom', roomId, uid });
+        await client.join(process.env.AGORA_APP_ID!, roomId, null, uid);
+
+        client.removeAllListeners('user-published');
+        client.removeAllListeners('user-unpublished');
+
+        client.on('user-published', handleUserPublished);
+        client.on('user-unpublished', handleUserUnpublished);
+      } catch (error) {
+        console.error(`Failed to join as viewer: ${error}`);
+      }
+    },
+    [isHost],
+  );
 
   useEffect(() => {
     // Next.jsのSSRでwindowオブジェクトが存在しないため、
@@ -90,18 +144,28 @@ export const useScreenShare = ({
       clientRef.current = client;
     })();
 
-    joinAsViewer();
-
     return () => {
       if (!clientRef.current) return;
+      console.log({ tag: 'useScreenShare', action: 'cleanup' });
       clientRef.current.leave();
     };
   }, []);
 
+  useEffect(() => {
+    if (!clientRef.current) return;
+    joinRoom({ client: clientRef.current!, roomId, uid });
+
+    return () => {
+      if (!clientRef.current) return;
+      clientRef.current.off('user-published', handleUserPublished);
+      clientRef.current.off('user-unpublished', handleUserUnpublished);
+    }
+  }, [uid, roomId]);
+
   return {
     isSharing: isHost,
     screenTrack,
-    joinAsViewer,
+    joinAsViewer: joinRoom,
     startScreenShare,
     stopScreenShare,
   };
