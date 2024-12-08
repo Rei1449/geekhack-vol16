@@ -51,7 +51,7 @@ export const useRoom = ({ roomId }: { roomId: string }) => {
         };
       }
       return prev;
-    })
+    });
   }, []);
 
   useEffect(() => {
