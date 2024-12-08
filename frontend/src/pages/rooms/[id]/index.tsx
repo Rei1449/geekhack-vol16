@@ -4,14 +4,22 @@ import { MessageDisplay } from 'src/components/message/MessageDisplay';
 import { MessageForm } from 'src/components/message/MessageForm';
 import { MessageHistory } from 'src/components/message/MessageHistory';
 import { MoodGage } from 'src/components/message/MoodGage';
+import { ScreenShare } from 'src/components/message/ScreenShare';
 import { Tutorial } from 'src/components/message/Tutorial';
 import { useRoom } from 'src/hooks/room';
+import { useScreenShare } from 'src/hooks/room/useScreenShare';
 import { REACTION_TEXT } from 'src/models/Message';
 import styled from 'styled-components';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function RoomPage() {
   const router = useRouter();
   const { id } = useMemo(() => router.query, [router.query]);
+  const { isSharing, screenTrack, startScreenShare, stopScreenShare } = useScreenShare({
+    roomId: id as string,
+    uid: uuidv4(), 
+  });
+
   const { room, messages, sendMessage, isTutorialDone, moodPercentage } =
     useRoom({
       roomId: id as string,
@@ -40,6 +48,18 @@ export default function RoomPage() {
           <RoomName>{room.name}</RoomName>
         </RoomNameWrapper>
       )}
+      <div style={{ 
+        position: 'fixed',
+        left: 0,
+        top: 0,
+        right: 0,
+        bottom: 0,
+      }}>
+        <ScreenShare 
+          screenTrack={screenTrack} 
+          opacity={0.3}
+        />
+      </div>
       <MessageDisplay messages={messages} />
       <Tutorial
         isVisible={!!room && !isTutorialDone}
@@ -47,6 +67,9 @@ export default function RoomPage() {
       />
       <MessageForm
         reactions={reactions}
+        isSharingScreen={isSharing}
+        onStartScreenShare={startScreenShare}
+        onStopScreenShare={stopScreenShare}
         onOpenMessageHistory={() => setIsOpenMessageDialog(true)}
         onSendMessage={handleSendMessage}
         onSendReaction={handleSendReaction}
