@@ -1,9 +1,9 @@
+import { Yusei_Magic } from '@next/font/google';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { HStack } from 'src/components/common/HStack';
 import { VStack } from 'src/components/common/VStack';
 import { useRoomCreate } from 'src/hooks/room';
 import styled from 'styled-components';
-import { Yusei_Magic } from '@next/font/google';
 
 const yuseimagic = Yusei_Magic({ weight: ['400'], subsets: ['latin'] });
 
