@@ -11,6 +11,7 @@ import os
 import psycopg2
 from psycopg2.extensions import connection
 from psycopg2 import pool
+from typing import Optional
 
 load_dotenv()
 
@@ -30,7 +31,7 @@ class CreateRoomRequest(BaseModel):
 class CreateMessageRequest(BaseModel):
     id: str
     message: str
-    user_name: str
+    user_name: Optional[str] = None
 
 class ConnectionManager:
     def __init__(self):
@@ -145,7 +146,7 @@ async def create_message(room_id:str, message_request:CreateMessageRequest):
     if message_request.message not in faces:
         conn = get_connection()
         cur = conn.cursor()
-        cur.execute(f"INSERT INTO messages (id,message,created_at,room_id,user_name) VALUES('{message['id']}','{message['message']}','{message['createdAt']}','{room_id},'{message['user_name']}')")
+        cur.execute(f"INSERT INTO messages (id,message,created_at,room_id,user_name) VALUES('{message['id']}','{message['message']}','{message['createdAt']}','{room_id}','{message['user_name']}')")
         conn.commit()
         cur.close()
         release_connection(conn)
