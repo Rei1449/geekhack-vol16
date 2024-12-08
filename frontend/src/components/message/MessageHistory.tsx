@@ -21,7 +21,7 @@ export function MessageHistory({
   return (
     <DialogOverlay onClick={onClickOutside}>
       <DialogWrapper>
-        <Dialog>
+        <Dialog onClick={(e) => e.stopPropagation()}>
           <HStack
             style={{
               alignItems: 'center',
