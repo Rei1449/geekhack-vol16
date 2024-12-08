@@ -6,7 +6,6 @@ import { v4 as uuidv4 } from 'uuid';
 
 export const useRoom = ({ roomId }: { roomId: string }) => {
   const [room, setRoom] = useState<Room | null>(null);
-  const [messages, setMessages] = useState<Message[]>([]);
   const [moodPercentage, setMoodPercentage] = useState<number>(0);
   const [isTutorialDone, setIsTutorialDone] = useState(false);
 
@@ -17,8 +16,15 @@ export const useRoom = ({ roomId }: { roomId: string }) => {
         message: value,
         createdAt: Date.now(),
       };
-      setMessages((prev) => {
-        return [...prev, message];
+
+      setRoom((prev) => {
+        if(prev){
+          return{
+            ...prev,
+            messages:[...prev.messages,message],
+          };
+        }
+        return prev;
       });
 
       const api = new RoomApi();
@@ -32,14 +38,20 @@ export const useRoom = ({ roomId }: { roomId: string }) => {
   );
 
   const pushMessage = useCallback((message: Message) => {
-    setMessages((prev) => {
-      // 自分で送信したメッセージはすでに追加されている
-      const isAlreadyExist = prev.some((m) => m.id === message.id);
-      if (isAlreadyExist) {
-        return prev;
+    setRoom((prev) => {
+      if(prev){
+        // 自分で送信したメッセージはすでに追加されている
+        const isAlreadyExist = prev.messages.some((m) => m.id === message.id);
+        if (isAlreadyExist) {
+          return prev;
+        }
+        return{
+          ...prev,
+          messages:[...prev.messages,message],
+        };
       }
-      return [...prev, message];
-    });
+      return prev;
+    })
   }, []);
 
   useEffect(() => {
@@ -75,24 +87,24 @@ export const useRoom = ({ roomId }: { roomId: string }) => {
     return () => {
       close();
     };
-  }, [room]);
+  }, [room?.id]);
 
   // 盛り上がり度を1秒間隔で計算
   useEffect(() => {
     setMoodPercentage(
       calcMoodPercentage({
-        messages,
+        messages: room?.messages??[],
       }),
     );
 
     const interval = setInterval(() => {
-      setMoodPercentage(calcMoodPercentage({ messages }));
+      setMoodPercentage(calcMoodPercentage({  messages: room?.messages??[] }));
     }, 1000);
 
     return () => {
       clearInterval(interval);
     };
-  }, [messages]);
+  }, [room?.messages??[]]);
 
   // 盛り上がりが100%を超えたらチュートリアルを終了
   useEffect(() => {
@@ -105,7 +117,7 @@ export const useRoom = ({ roomId }: { roomId: string }) => {
 
   return {
     room,
-    messages,
+    messages: room?.messages??[],
     sendMessage,
     isTutorialDone,
     moodPercentage,
