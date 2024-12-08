@@ -55,6 +55,7 @@ export default function RoomPage() {
         <MoodGage percentage={moodPercentage} />
       </MoodGageWrapper>
       <MessageHistory
+        messages={messages}
         isOpen={isOpenMessageDialog}
         onClickOutside={() => setIsOpenMessageDialog(false)}
         onClose={() => setIsOpenMessageDialog(false)}

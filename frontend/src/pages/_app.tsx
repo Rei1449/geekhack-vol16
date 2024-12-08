@@ -1,4 +1,3 @@
-import { Yusei_Magic } from '@next/font/google';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 
@@ -9,7 +8,7 @@ declare module 'react' {
   }
 }
 
-const yuseimagic = Yusei_Magic({ weight: ['400'], subsets: ['latin'] });
+// const yuseimagic = Yusei_Magic({ weight: ['400'], subsets: ['latin'] });
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -29,7 +28,6 @@ export default function App({ Component, pageProps }: AppProps) {
           html,
           ::-webkit-input-placeholder,
           input {
-            font-family: ${yuseimagic.style.fontFamily};
             letter-spacing: 0.1rem;
           }
 
