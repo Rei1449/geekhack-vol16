@@ -15,10 +15,11 @@ import { v4 as uuidv4 } from 'uuid';
 export default function RoomPage() {
   const router = useRouter();
   const { id } = useMemo(() => router.query, [router.query]);
-  const { isSharing, screenTrack, startScreenShare, stopScreenShare } = useScreenShare({
-    roomId: id as string,
-    uid: uuidv4(), 
-  });
+  const { isSharing, screenTrack, startScreenShare, stopScreenShare } =
+    useScreenShare({
+      roomId: id as string,
+      uid: uuidv4(),
+    });
 
   const { room, messages, sendMessage, isTutorialDone, moodPercentage } =
     useRoom({
@@ -48,17 +49,16 @@ export default function RoomPage() {
           <RoomName>{room.name}</RoomName>
         </RoomNameWrapper>
       )}
-      <div style={{ 
-        position: 'fixed',
-        left: 0,
-        top: 0,
-        right: 0,
-        bottom: 0,
-      }}>
-        <ScreenShare 
-          screenTrack={screenTrack} 
-          opacity={0.3}
-        />
+      <div
+        style={{
+          position: 'fixed',
+          left: 0,
+          top: 0,
+          right: 0,
+          bottom: 0,
+        }}
+      >
+        <ScreenShare screenTrack={screenTrack} opacity={0.3} />
       </div>
       <MessageDisplay messages={messages} />
       <Tutorial

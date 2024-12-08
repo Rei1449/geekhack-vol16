@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import CommentIcon from 'src/components/svg/comment.svg';
-import SendIcon from 'src/components/svg/send.svg';
 import ScreenShareIcon from 'src/components/svg/screen_share.svg';
+import SendIcon from 'src/components/svg/send.svg';
 import StopShareScreenIcon from 'src/components/svg/stop_screen_share.svg';
 import { Size } from 'src/constants/Size';
 import { isEmoji } from 'src/models/Message';
@@ -81,11 +81,11 @@ export function MessageForm({
           style={{ backgroundColor: isSharingScreen ? '#b30300' : 'white' }}
           onClick={isSharingScreen ? onStopScreenShare : onStartScreenShare}
         >
-          {
-            isSharingScreen
-              ? <StopShareScreenIcon fill='white'/>
-              : <ScreenShareIcon />
-          }
+          {isSharingScreen ? (
+            <StopShareScreenIcon fill="white" />
+          ) : (
+            <ScreenShareIcon />
+          )}
         </CircleButton>
         <ShowMessageListButton onClick={onOpenMessageHistory}>
           <CommentIcon />
