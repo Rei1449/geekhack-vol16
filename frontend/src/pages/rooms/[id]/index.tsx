@@ -1,19 +1,16 @@
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { MessageDisplay } from 'src/components/message/MessageDisplay';
+import { MessageForm } from 'src/components/message/MessageForm';
 import { MoodGage } from 'src/components/message/MoodGage';
 import { Tutorial } from 'src/components/message/Tutorial';
-import SendIcon from 'src/components/svg/send.svg';
-import { Size } from 'src/constants/Size';
 import { useRoom } from 'src/hooks/room';
-import { isEmoji, REACTION_TEXT } from 'src/models/Message';
+import { REACTION_TEXT } from 'src/models/Message';
 import styled from 'styled-components';
 
 export default function RoomPage() {
   const router = useRouter();
   const { id } = useMemo(() => router.query, [router.query]);
-  const [inputText, setInputText] = useState('');
-  const inputRef = useRef<HTMLInputElement>(null);
   const { room, messages, sendMessage, isTutorialDone, moodPercentage } =
     useRoom({
       roomId: id as string,
@@ -21,14 +18,10 @@ export default function RoomPage() {
   const reactions = [...REACTION_TEXT.NEGATIVE, ...REACTION_TEXT.POSITIVE];
 
   const handleSendMessage = useCallback(
-    (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      if (inputText === '') return;
-      sendMessage({ value: inputText });
-      setInputText('');
-      inputRef.current?.focus(); // input要素にfocusを戻す
+    (value: string) => {
+      sendMessage({ value });
     },
-    [inputText, sendMessage],
+    [sendMessage],
   );
 
   const handleSendReaction = useCallback(
@@ -37,23 +30,6 @@ export default function RoomPage() {
     },
     [sendMessage],
   );
-
-  // 常にinput要素にfocusが当たるように
-  useEffect(() => {
-    inputRef.current?.focus();
-    // inputからfocusが外れたとき、tabキーを押したらinput要素にfocusが戻るようにする
-    const handleTabPress = (e: KeyboardEvent) => {
-      if (e.key === 'Tab') {
-        inputRef.current?.focus(); // input要素にfocusを戻す
-        e.preventDefault();
-      }
-    };
-
-    window.addEventListener('keydown', handleTabPress);
-    return () => {
-      window.removeEventListener('keydown', handleTabPress);
-    };
-  }, []);
 
   return (
     <Wrapper>
@@ -67,41 +43,11 @@ export default function RoomPage() {
         isVisible={!!room && !isTutorialDone}
         moodPercentage={moodPercentage}
       />
-      <FormWrapper>
-        <ReactionButtonStack>
-          {reactions.map((reaction, index) =>
-            isEmoji(reaction) ? (
-              <EmojiReactionButton
-                key={index}
-                onClick={() => handleSendReaction({ reaction })}
-              >
-                {reaction}
-              </EmojiReactionButton>
-            ) : (
-              <PhraseReactionButton
-                key={index}
-                onClick={() => handleSendReaction({ reaction })}
-              >
-                {reaction}
-              </PhraseReactionButton>
-            ),
-          )}
-        </ReactionButtonStack>
-        <MessageFormWrapper>
-          <MessageForm onSubmit={handleSendMessage}>
-            <MessageFormInput
-              ref={inputRef}
-              type="text"
-              placeholder="メッセージを入力"
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
-            />
-            <MessageFormSubmitButton type="submit">
-              <SendIcon color="#444444" style={{ userSelect: 'none' }} />
-            </MessageFormSubmitButton>
-          </MessageForm>
-        </MessageFormWrapper>
-      </FormWrapper>
+      <MessageForm
+        reactions={reactions}
+        onSendMessage={handleSendMessage}
+        onSendReaction={handleSendReaction}
+      />
       <MoodGageWrapper>
         <MoodGage percentage={moodPercentage} />
       </MoodGageWrapper>
@@ -120,107 +66,6 @@ const MoodGageWrapper = styled.div`
   position: absolute;
   top: 8px;
   left: 16px;
-`;
-
-const FormWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: ${Size.Room.Form.padding}px;
-  gap: ${Size.Room.Form.gap}px;
-
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-`;
-
-const MessageFormWrapper = styled.div`
-  display: flex;
-  gap: 16px;
-  width: 600px;
-  max-width: 100%;
-`;
-
-const MessageForm = styled.form`
-  flex: 1;
-  display: flex;
-
-  height: ${Size.Room.Form.MessageArea.height}px;
-  padding: 4px 16px;
-
-  background-color: white;
-  border: 1px solid rgba(100, 100, 100, 0.1);
-  border-radius: 50px;
-  box-shadow: 10px 10px 0 rgb(156 160 160 / 40%);
-`;
-
-const MessageFormInput = styled.input`
-  width: 100%;
-  background-color: transparent;
-  border: none;
-
-  &:focus {
-    outline: none;
-  }
-`;
-
-const MessageFormSubmitButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 50px;
-  height: 50px;
-
-  color: white;
-  background-color: white;
-  border: none;
-  border-radius: 50%;
-  font-size: 24px;
-  font-weight: 500;
-  cursor: pointer;
-
-  transition: all 0.3s;
-
-  &:active {
-    transform: scale(0.5);
-  }
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.1);
-  }
-`;
-
-const ReactionButtonStack = styled.div`
-  display: flex;
-  gap: 4px;
-`;
-
-const BaseReactionButton = styled.button`
-  cursor: pointer;
-  width: ${Size.Room.Form.ReactionButton.height}px;
-  height: ${Size.Room.Form.ReactionButton.height}px;
-  padding: 2px;
-  border-radius: 20px;
-  background-color: white;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  user-select: none;
-  transition: all 0.3s;
-
-  &:active {
-    transform: scale(0.7);
-  }
-`;
-
-const EmojiReactionButton = styled(BaseReactionButton)`
-  font-size: 32px;
-`;
-
-const PhraseReactionButton = styled(BaseReactionButton)`
-  font-size: 16px;
-  width: auto;
-  white-space: nowrap;
-  padding-inline: 6px;
 `;
 
 const RoomNameWrapper = styled.div`
