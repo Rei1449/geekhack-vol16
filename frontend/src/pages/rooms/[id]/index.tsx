@@ -15,10 +15,11 @@ import { v4 as uuidv4 } from 'uuid';
 export default function RoomPage() {
   const router = useRouter();
   const { id } = useMemo(() => router.query, [router.query]);
+  const screenShareUid = useMemo(() => uuidv4(), []);
   const { isSharing, screenTrack, startScreenShare, stopScreenShare } =
     useScreenShare({
       roomId: id as string,
-      uid: uuidv4(),
+      uid: screenShareUid,
     });
 
   const { room, messages, sendMessage, isTutorialDone, moodPercentage } =
