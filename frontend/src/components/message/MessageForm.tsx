@@ -1,17 +1,25 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import CommentIcon from 'src/components/svg/comment.svg';
+import ScreenShareIcon from 'src/components/svg/screen_share.svg';
 import SendIcon from 'src/components/svg/send.svg';
+import StopShareScreenIcon from 'src/components/svg/stop_screen_share.svg';
 import { Size } from 'src/constants/Size';
 import { isEmoji } from 'src/models/Message';
 import styled from 'styled-components';
 
 export function MessageForm({
   reactions,
+  isSharingScreen,
   onOpenMessageHistory,
+  onStartScreenShare,
+  onStopScreenShare,
   onSendReaction,
   onSendMessage,
 }: {
+  isSharingScreen: boolean;
   reactions: string[];
+  onStartScreenShare: () => void;
+  onStopScreenShare: () => void;
   onOpenMessageHistory: () => void;
   onSendReaction: (params: { reaction: string }) => void;
   onSendMessage: (value: string) => void;
@@ -69,6 +77,16 @@ export function MessageForm({
         )}
       </ReactionButtonStack>
       <MessageFormWrapper>
+        <CircleButton
+          style={{ backgroundColor: isSharingScreen ? '#b30300' : 'white' }}
+          onClick={isSharingScreen ? onStopScreenShare : onStartScreenShare}
+        >
+          {isSharingScreen ? (
+            <StopShareScreenIcon fill="white" />
+          ) : (
+            <ScreenShareIcon />
+          )}
+        </CircleButton>
         <ShowMessageListButton onClick={onOpenMessageHistory}>
           <CommentIcon />
         </ShowMessageListButton>
@@ -104,7 +122,7 @@ const FormWrapper = styled.div`
 
 const MessageFormWrapper = styled.div`
   display: flex;
-  gap: 16px;
+  gap: 8px;
   width: 600px;
   max-width: 100%;
 `;

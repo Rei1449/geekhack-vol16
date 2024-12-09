@@ -18,7 +18,9 @@ const nextConfig = {
   env: {
     BACKEND_WEBSOCKET_PROTOCOL: process.env.BACKEND_WEBSOCKET_PROTOCOL, 
     BACKEND_PLOTOCOL: process.env.BACKEND_PLOTOCOL,
-    BACKEND_HOST: process.env.BACKEND_HOST
+    BACKEND_HOST: process.env.BACKEND_HOST,
+
+    AGORA_APP_ID: process.env.AGORA_APP_ID,
   }
 };
 
