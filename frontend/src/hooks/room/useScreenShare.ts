@@ -57,8 +57,6 @@ export const useScreenShare = ({
       const AgoraRTC = (await import('agora-rtc-sdk-ng')).default;
       const screenTrack = (await AgoraRTC.createScreenVideoTrack({
         displaySurface: 'window',
-        encoderConfig: '720p_1',
-        optimizationMode: 'motion',
       })) as ILocalVideoTrack;
       await client.publish(screenTrack);
 
