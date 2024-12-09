@@ -4,7 +4,7 @@ import {
   ILocalVideoTrack,
   IRemoteVideoTrack,
 } from 'agora-rtc-sdk-ng';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 export const useScreenShare = ({
   roomId,
@@ -13,14 +13,37 @@ export const useScreenShare = ({
   roomId: string;
   uid: string;
 }) => {
-  const [client, setClient] = useState<IAgoraRTCClient | null>(null);
+  // const [client, setClient] = useState<IAgoraRTCClient | null>(null);
+  const clientRef = useRef<IAgoraRTCClient | null>(null);
 
   const [isHost, setIsHost] = useState(false);
   const [screenTrack, setScreenTrack] = useState<
     ILocalVideoTrack | IRemoteVideoTrack | null
   >(null);
 
+  const initClient = useCallback(async () => {
+    if (clientRef.current) return clientRef.current;
+
+    // Next.jsのSSRでwindowオブジェクトが存在しないため、
+    // クライアントサイドでのみ実行する
+    const AgoraRTC = (await import('agora-rtc-sdk-ng')).default;
+    const client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' });
+    clientRef.current = client;
+    return client;
+  }, []);
+
   const startScreenShare = useCallback(async () => {
+    const client = clientRef.current;
+
+    console.log({
+      tag: 'useScreenShare',
+      action: 'startScreenShare',
+      roomId,
+      uid,
+      client,
+      connectionState: client?.connectionState,
+    });
+
     if (!roomId) return;
     if (!client) return;
 
@@ -30,8 +53,6 @@ export const useScreenShare = ({
       return;
     }
 
-    setIsHost(true);
-
     try {
       const AgoraRTC = (await import('agora-rtc-sdk-ng')).default;
       const screenTrack = (await AgoraRTC.createScreenVideoTrack({
@@ -39,17 +60,23 @@ export const useScreenShare = ({
         encoderConfig: '720p_1',
         optimizationMode: 'motion',
       })) as ILocalVideoTrack;
-      setScreenTrack(screenTrack);
-
       await client.publish(screenTrack);
+
+      setScreenTrack(screenTrack);
+      setIsHost(true);
     } catch (error) {
-      console.error(error);
+      console.error({
+        tag: 'useScreenShare',
+        action: 'startScreenShare',
+        error,
+      });
       setScreenTrack(null);
       setIsHost(false);
     }
-  }, [client, roomId, uid]);
+  }, [roomId, uid]);
 
   const stopScreenShare = useCallback(async () => {
+    const client = clientRef.current;
     setIsHost(false);
 
     if (!client) return;
@@ -76,7 +103,18 @@ export const useScreenShare = ({
       user: IAgoraRTCRemoteUser,
       mediaType: 'audio' | 'video' | 'datachannel',
     ) => {
-      console.log({ tag: 'useScreenShare', action: 'user-published', mediaType, user, isHost });
+      const client = clientRef.current;
+
+      console.log({
+        tag: 'useScreenShare',
+        action: 'user-published',
+        mediaType,
+        user,
+        isHost,
+        client,
+      });
+
+      if (!client) return;
 
       // ホストの場合は何もしない
       if (isHost) return;
@@ -84,20 +122,35 @@ export const useScreenShare = ({
       // 画面共有のみを受信する
       if (mediaType !== 'video') return;
 
-      if (!client) return;
+      console.log({
+        tag: 'useScreenShare',
+        action: 'subscribe',
+        user,
+        mediaType,
+      });
       await client.subscribe(user, mediaType);
 
       const remoteScreenTrack = user.videoTrack;
       if (!remoteScreenTrack) return;
+
+      console.log({
+        tag: 'useScreenShare',
+        action: 'setScreenTrack',
+        remoteScreenTrack,
+      });
       setScreenTrack(remoteScreenTrack);
     },
-    [client, isHost],
+    [isHost],
   );
 
   const handleUserUnpublished = useCallback(() => {
     console.log({ tag: 'useScreenShare', action: 'user-unpublished' });
     setScreenTrack(null);
   }, []);
+
+  useEffect(() => {
+    console.log({ tag: 'useScreenShare', action: 'screenTrack', screenTrack });
+  }, [screenTrack]);
 
   const joinRoom = useCallback(
     async ({
@@ -122,6 +175,20 @@ export const useScreenShare = ({
           await client.leave();
         }
 
+        // 入室前に画面共有が始まっていた場合
+        for (const user of client.remoteUsers) {
+          console.log({ tag: 'useScreenShare', action: 'remoteUsers', user });
+          if (user.videoTrack) {
+            console.log({
+              tag: 'useScreenShare',
+              action: 'user-published',
+              user,
+            });
+            setScreenTrack(user.videoTrack);
+            break;
+          }
+        }
+
         console.log({ tag: 'useScreenShare', action: 'joinRoom', roomId, uid });
         await client.join(process.env.AGORA_APP_ID!, roomId, null, uid);
 
@@ -138,15 +205,8 @@ export const useScreenShare = ({
   );
 
   useEffect(() => {
-    // Next.jsのSSRでwindowオブジェクトが存在しないため、
-    // クライアントサイドでのみ実行する
-    (async () => {
-      const AgoraRTC = (await import('agora-rtc-sdk-ng')).default;
-      const client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' });
-      setClient(client);
-    })();
-
     return () => {
+      const client = clientRef.current;
       if (!client) return;
       console.log({ tag: 'useScreenShare', action: 'cleanup' });
       client.leave();
@@ -154,21 +214,18 @@ export const useScreenShare = ({
   }, []);
 
   useEffect(() => {
-    if (!client) return;
-
-    // 入室直後は接続がうまくいかないことがある
-    const id = setTimeout(() => {
+    initClient().then((client) => {
+      clientRef.current = client;
       joinRoom({ client, roomId, uid });
-    }, 1000);
+    });
 
     return () => {
-      clearTimeout(id);
-
+      const client = clientRef.current;
       if (!client) return;
       client.off('user-published', handleUserPublished);
       client.off('user-unpublished', handleUserUnpublished);
     };
-  }, [client !== null, uid, roomId]);
+  }, [uid, roomId]);
 
   return {
     isSharing: isHost,
