@@ -17,7 +17,7 @@ export function MessageHistory({
   if (!isOpen) {
     return null;
   }
-  const defaultMessage = ['👍', '😁', '🤩', '🤯', '😑', '🤔','わかる','ざわざわ']
+  const defaultMessage = ['👍', '😁', '🤩', '🤯', '😑', '🤔','わかる','ざわざわ'];
 
   return (
     <DialogOverlay onClick={onClickOutside}>
