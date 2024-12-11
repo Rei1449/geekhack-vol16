@@ -13,19 +13,25 @@ import styled from 'styled-components';
 export default function RoomPage() {
   const router = useRouter();
   const { id } = useMemo(() => router.query, [router.query]);
-  const { room, messages, sendMessage, isTutorialDone, moodPercentage } =
-    useRoom({
-      roomId: id as string,
-    });
+  const {
+    room,
+    userName,
+    messages,
+    sendMessage,
+    isTutorialDone,
+    moodPercentage,
+    setUserName,
+  } = useRoom({
+    roomId: id as string,
+  });
   const reactions = [...REACTION_TEXT.NEGATIVE, ...REACTION_TEXT.POSITIVE];
   const [isOpenMessageDialog, setIsOpenMessageDialog] = useState(false);
-  const [userName, setUserName] = useState<string | undefined>();
 
   const handleSendMessage = useCallback(
     (value: string) => {
-      sendMessage({ value });
+      sendMessage({ value, userName });
     },
-    [sendMessage],
+    [sendMessage, userName],
   );
 
   const handleSendReaction = useCallback(
