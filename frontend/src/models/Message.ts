@@ -53,7 +53,14 @@ export function calcMoodPercentage({
   return Math.min(messagesInDuration.length / maxMessageCount, 1.0) * 100;
 }
 
-export function isQuestion(message: Message): boolean{
-  if (message.score === undefined) return false
-  return message.score >=0
+export function isQuestion(message: Message): boolean {
+  if (message.score === undefined) return false;
+  return message.score >= 0;
+}
+
+export function isMessageContainedArray(
+  message: Message,
+  array: string[],
+): boolean {
+  return array.includes(message.message);
 }

@@ -1,4 +1,8 @@
-import { isQuestion, Message } from 'src/models/Message';
+import {
+  isMessageContainedArray,
+  isQuestion,
+  Message,
+} from 'src/models/Message';
 import styled from 'styled-components';
 import { HStack } from '../common/HStack';
 import { VStack } from '../common/VStack';
@@ -17,16 +21,6 @@ export function MessageHistory({
   if (!isOpen) {
     return null;
   }
-  const defaultMessage = [
-    '👍',
-    '😁',
-    '🤩',
-    '🤯',
-    '😑',
-    '🤔',
-    'わかる',
-    'ざわざわ',
-  ];
 
   return (
     <DialogOverlay onClick={onClickOutside}>
@@ -50,7 +44,19 @@ export function MessageHistory({
             }}
           >
             {messages
-              .filter((messages) => !defaultMessage.includes(messages.message))
+              .filter(
+                (messages) =>
+                  !isMessageContainedArray(messages, [
+                    '👍',
+                    '😁',
+                    '🤩',
+                    '🤯',
+                    '😑',
+                    '🤔',
+                    'わかる',
+                    'ざわざわ',
+                  ]),
+              )
               .filter((messages) => isQuestion(messages))
               .map((message) => (
                 <VStack style={{ gap: 0 }} key={message.id}>
