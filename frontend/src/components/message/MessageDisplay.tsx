@@ -12,20 +12,26 @@ const yuseimagic = Yusei_Magic({ weight: ['400'], subsets: ['latin'] });
 
 export const MessageDisplay = ({
   messages: defaultMessages,
+  bufferDurationInSec = 10,
 }: {
   messages: Message[];
+  bufferDurationInSec?: number;
 }) => {
   const [messages, setMessages] = useState<MessageWithAnimation[]>([]);
 
   // 新規メッセージを追加
   useEffect(() => {
     setMessages((prev) => {
-      const newMessages = defaultMessages.filter((message) => {
-        const isExist = prev.find(
-          (prevMessage) => prevMessage.id === message.id,
-        );
-        return !isExist;
-      });
+      const newMessages = defaultMessages
+        .filter((message) => {
+          const isExist = prev.find(
+            (prevMessage) => prevMessage.id === message.id,
+          );
+          return !isExist;
+        })
+        .filter((message) => {
+          return message.createdAt > Date.now() / 1000 - bufferDurationInSec;
+        });
 
       prev.push(
         ...newMessages.map((message) =>

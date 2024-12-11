@@ -17,6 +17,16 @@ export function MessageHistory({
   if (!isOpen) {
     return null;
   }
+  const defaultMessage = [
+    '👍',
+    '😁',
+    '🤩',
+    '🤯',
+    '😑',
+    '🤔',
+    'わかる',
+    'ざわざわ',
+  ];
 
   return (
     <DialogOverlay onClick={onClickOutside}>
@@ -39,19 +49,21 @@ export function MessageHistory({
               overflowY: 'scroll',
             }}
           >
-            {messages.map((message) => (
-              <VStack style={{ gap: 0 }} key={message.id}>
-                <MessageText
-                  style={{
-                    fontSize: 12,
-                    color: 'rgba(0, 0, 0, 0.6)',
-                  }}
-                >
-                  匿名さん
-                </MessageText>
-                <MessageText>{message.message}</MessageText>
-              </VStack>
-            ))}
+            {messages
+              .filter((messages) => !defaultMessage.includes(messages.message))
+              .map((message) => (
+                <VStack style={{ gap: 0 }} key={message.id}>
+                  <MessageText
+                    style={{
+                      fontSize: 12,
+                      color: 'rgba(0, 0, 0, 0.6)',
+                    }}
+                  >
+                    匿名さん
+                  </MessageText>
+                  <MessageText>{message.message}</MessageText>
+                </VStack>
+              ))}
           </VStack>
         </Dialog>
       </DialogWrapper>
