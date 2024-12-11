@@ -5,6 +5,7 @@ import { MessageForm } from 'src/components/message/MessageForm';
 import { MessageHistory } from 'src/components/message/MessageHistory';
 import { MoodGage } from 'src/components/message/MoodGage';
 import { Tutorial } from 'src/components/message/Tutorial';
+import { UserName } from 'src/components/message/UserName';
 import { useRoom } from 'src/hooks/room';
 import { REACTION_TEXT } from 'src/models/Message';
 import styled from 'styled-components';
@@ -18,6 +19,7 @@ export default function RoomPage() {
     });
   const reactions = [...REACTION_TEXT.NEGATIVE, ...REACTION_TEXT.POSITIVE];
   const [isOpenMessageDialog, setIsOpenMessageDialog] = useState(false);
+  const [userName, setUserName] = useState<string | undefined>();
 
   const handleSendMessage = useCallback(
     (value: string) => {
@@ -51,6 +53,9 @@ export default function RoomPage() {
         onSendMessage={handleSendMessage}
         onSendReaction={handleSendReaction}
       />
+      <UserNameWrapper>
+        <UserName name={userName} onChangeName={setUserName} />
+      </UserNameWrapper>
       <MoodGageWrapper>
         <MoodGage percentage={moodPercentage} />
       </MoodGageWrapper>
@@ -89,4 +94,12 @@ const RoomName = styled.div`
   font-weight: bold;
   color: rgba(0, 0, 0, 0.1);
   z-index: 1;
+`;
+
+const UserNameWrapper = styled.div`
+  padding: 16px;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
 `;
