@@ -118,7 +118,7 @@ async def room(room_id:str):
                 "id":item[0],
                 "message": item[1],
                 "createdAt": item[2],
-                "user_name":item[3],
+                "userName":item[3],
                 "score": message_score(item[1])
             })
     cur.close()
@@ -138,7 +138,7 @@ async def create_message(room_id:str, message_request:CreateMessageRequest):
       "id": message_request.id,
       "message": message_request.message,
       "createdAt": now,
-      "user_name": message_request.user_name,
+      "userName": message_request.user_name,
       "score": score
     }
     await manager.broadcast(room_id, json.dumps(message))
