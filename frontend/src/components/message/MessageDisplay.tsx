@@ -12,7 +12,7 @@ const yuseimagic = Yusei_Magic({ weight: ['400'], subsets: ['latin'] });
 
 export const MessageDisplay = ({
   messages: defaultMessages,
-  bufferDurationInSec = 10
+  bufferDurationInSec = 10,
 }: {
   messages: Message[];
   bufferDurationInSec?: number;
