@@ -98,10 +98,10 @@ export function MessageForm({
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
           />
+          <MessageFormSubmitButton type="submit">
+            <SendIcon color="#444444" style={{ userSelect: 'none' }} />
+          </MessageFormSubmitButton>
         </MessageFormComponent>
-        <MessageFormSubmitButton type="submit">
-          <SendIcon color="#444444" style={{ userSelect: 'none' }} />
-        </MessageFormSubmitButton>
       </MessageFormWrapper>
     </FormWrapper>
   );
@@ -130,21 +130,22 @@ const MessageFormWrapper = styled.div`
 const MessageFormComponent = styled.form`
   flex: 1;
   display: flex;
-
-  box-sizing: border-box;
-  height: ${Size.Room.Form.MessageArea.height}px;
-  padding: 4px 16px;
-
-  background-color: white;
-  border: 1px solid rgba(100, 100, 100, 0.1);
-  border-radius: 50px;
-  box-shadow: 10px 10px 0 rgb(156 160 160 / 40%);
+  gap: 8px;
 `;
 
 const MessageFormInput = styled.input`
   width: 100%;
   background-color: transparent;
   border: none;
+
+  background-color: white;
+  border: 1px solid rgba(100, 100, 100, 0.1);
+  border-radius: 50px;
+  box-shadow: 10px 10px 0 rgb(156 160 160 / 40%);
+
+  box-sizing: border-box;
+  height: ${Size.Room.Form.MessageArea.height}px;
+  padding: 4px 16px;
 
   &:focus {
     outline: none;
