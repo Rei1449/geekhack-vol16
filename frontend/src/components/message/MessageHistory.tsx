@@ -17,6 +17,7 @@ export function MessageHistory({
   if (!isOpen) {
     return null;
   }
+  const defaultMessage = ['👍', '😁', '🤩', '🤯', '😑', '🤔','わかる','ざわざわ']
 
   return (
     <DialogOverlay onClick={onClickOutside}>
@@ -39,7 +40,9 @@ export function MessageHistory({
               overflowY: 'scroll',
             }}
           >
-            {messages.map((message) => (
+            {messages
+            .filter((messages) => !defaultMessage.includes(messages.message))
+            .map((message) => (
               <VStack style={{ gap: 0 }} key={message.id}>
                 <MessageText
                   style={{
