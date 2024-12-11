@@ -1,6 +1,7 @@
 export type Message = {
   id: string;
   message: string;
+  score: number;
   createdAt: number;
 };
 
