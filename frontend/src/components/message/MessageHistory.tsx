@@ -50,7 +50,11 @@ export function MessageHistory({
             }}
           >
             {messages
-              .filter((messages) => !defaultMessage.includes(messages.message) && messages.score == 1)
+              .filter(
+                (messages) =>
+                  !defaultMessage.includes(messages.message) &&
+                  messages.score == 1,
+              )
               .map((message) => (
                 <VStack style={{ gap: 0 }} key={message.id}>
                   <MessageText
