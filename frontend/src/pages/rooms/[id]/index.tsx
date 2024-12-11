@@ -45,7 +45,7 @@ export default function RoomPage() {
 
   return (
     <Wrapper>
-      {room && isTutorialDone && (
+      {room && isTutorialDone && !screenTrack && (
         <RoomNameWrapper>
           <RoomName>{room.name}</RoomName>
         </RoomNameWrapper>
