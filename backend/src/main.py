@@ -126,7 +126,7 @@ async def room(room_id:str):
 
     return room_data
 
-faces = ['👍', '😁', '🤩', '🤯', '😑', '🤔']
+defaultMessage = ['👍', '😁', '🤩', '🤯', '😑', '🤔','わかる','ざわざわ']
 
 #メッセージ新規作成
 @app.post("/rooms/{room_id}/messages")
@@ -143,7 +143,7 @@ async def create_message(room_id:str, message_request:CreateMessageRequest):
     }
     await manager.broadcast(room_id, json.dumps(message))
 
-    if message_request.message not in faces:
+    if message_request.message not in defaultMessage:
         conn = get_connection()
         cur = conn.cursor()
         cur.execute(f"INSERT INTO messages (id,message,created_at,room_id,user_name) VALUES('{message['id']}','{message['message']}','{message['createdAt']}','{room_id}','{message['user_name']}')")

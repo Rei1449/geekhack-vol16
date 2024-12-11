@@ -4,11 +4,14 @@ import { MessageDisplay } from 'src/components/message/MessageDisplay';
 import { MessageForm } from 'src/components/message/MessageForm';
 import { MessageHistory } from 'src/components/message/MessageHistory';
 import { MoodGage } from 'src/components/message/MoodGage';
+import { ScreenShare } from 'src/components/message/ScreenShare';
 import { Tutorial } from 'src/components/message/Tutorial';
 import { UserName } from 'src/components/message/UserName';
 import { useRoom } from 'src/hooks/room';
+import { useScreenShare } from 'src/hooks/room/useScreenShare';
 import { REACTION_TEXT } from 'src/models/Message';
 import styled from 'styled-components';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function RoomPage() {
   const router = useRouter();
@@ -24,6 +27,13 @@ export default function RoomPage() {
   } = useRoom({
     roomId: id as string,
   });
+  const screenShareUid = useMemo(() => uuidv4(), []);
+  const { isSharing, screenTrack, startScreenShare, stopScreenShare } =
+    useScreenShare({
+      roomId: id as string,
+      uid: screenShareUid,
+    });
+
   const reactions = [...REACTION_TEXT.NEGATIVE, ...REACTION_TEXT.POSITIVE];
   const [isOpenMessageDialog, setIsOpenMessageDialog] = useState(false);
 
@@ -43,11 +53,22 @@ export default function RoomPage() {
 
   return (
     <Wrapper>
-      {room && isTutorialDone && (
+      {room && isTutorialDone && !screenTrack && (
         <RoomNameWrapper>
           <RoomName>{room.name}</RoomName>
         </RoomNameWrapper>
       )}
+      <div
+        style={{
+          position: 'fixed',
+          left: 0,
+          top: 0,
+          right: 0,
+          bottom: 0,
+        }}
+      >
+        <ScreenShare screenTrack={screenTrack} opacity={0.3} />
+      </div>
       <MessageDisplay messages={messages} />
       <Tutorial
         isVisible={!!room && !isTutorialDone}
@@ -55,6 +76,9 @@ export default function RoomPage() {
       />
       <MessageForm
         reactions={reactions}
+        isSharingScreen={isSharing}
+        onStartScreenShare={startScreenShare}
+        onStopScreenShare={stopScreenShare}
         onOpenMessageHistory={() => setIsOpenMessageDialog(true)}
         onSendMessage={handleSendMessage}
         onSendReaction={handleSendReaction}
