@@ -1,4 +1,4 @@
-import { Message } from 'src/models/Message';
+import { isQuestion, Message } from 'src/models/Message';
 import styled from 'styled-components';
 import { HStack } from '../common/HStack';
 import { VStack } from '../common/VStack';
@@ -50,11 +50,8 @@ export function MessageHistory({
             }}
           >
             {messages
-              .filter(
-                (messages) =>
-                  !defaultMessage.includes(messages.message) &&
-                  messages.score == 1,
-              )
+              .filter((messages) => !defaultMessage.includes(messages.message))
+              .filter((messages) => isQuestion(messages))
               .map((message) => (
                 <VStack style={{ gap: 0 }} key={message.id}>
                   <MessageText
