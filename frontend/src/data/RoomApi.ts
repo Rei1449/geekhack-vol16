@@ -28,12 +28,14 @@ export class RoomApi {
     id,
     message,
     roomId,
+    userName,
   }: SendMessageRequest): Promise<Message> {
     const response = await axios.post(
       `${this.baseUrl}/rooms/${roomId}/messages`,
       {
         id: id,
         message: message,
+        user_name: userName,
       },
     );
     return {
@@ -91,6 +93,7 @@ type SendMessageRequest = {
   id: string;
   message: string;
   roomId: string;
+  userName?: string;
 };
 
 type ObserveRoom = {
