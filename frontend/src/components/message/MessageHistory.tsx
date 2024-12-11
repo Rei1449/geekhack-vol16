@@ -66,7 +66,7 @@ export function MessageHistory({
                       color: 'rgba(0, 0, 0, 0.6)',
                     }}
                   >
-                    匿名さん
+                    {message?.userName ?? '匿名さん'}
                   </MessageText>
                   <MessageText>{message.message}</MessageText>
                 </VStack>

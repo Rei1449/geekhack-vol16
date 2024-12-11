@@ -25,6 +25,18 @@ app.add_middleware(
   allow_headers=["*"],
 )
 
+class Message(BaseModel):
+    id: str
+    message: str
+    score: Optional[int] = None   
+    userName: Optional[str] = None
+    createdAt: Optional[int] = None 
+    
+class Room(BaseModel):
+    id: str
+    name: str
+    messages: List[Message]
+
 class CreateRoomRequest(BaseModel):
     name: str
 
@@ -78,13 +90,13 @@ async def root():
 
 #新規ルーム作成
 @app.post("/rooms")
-async def create_room(room_request:CreateRoomRequest):
+async def create_room(room_request:CreateRoomRequest) -> Room:
     id = str(uuid.uuid4())
-    room = {
-      "id": id,
-      "name": room_request.name,
-      "messages":[]
-    }
+    room = Room(
+        id=id, 
+        name=room_request.name, 
+        messages=[],
+    )
 
     conn = get_connection()
     cur = conn.cursor()
@@ -96,7 +108,7 @@ async def create_room(room_request:CreateRoomRequest):
 
 #ルーム情報取得
 @app.get("/rooms/{room_id}")
-async def room(room_id:str):
+async def room(room_id:str) -> Room:
     conn = get_connection()
     cur = conn.cursor()
     cur.execute(f"SELECT name FROM rooms WHERE id = '{room_id}';")
@@ -106,31 +118,32 @@ async def room(room_id:str):
     cur.execute(f"SELECT id,message,created_at,user_name FROM messages WHERE room_id = '{room_id}';")
     messages = cur.fetchall()
 
-    room_data = {
-        "id": room_id,
-        "name": room_name[0][0],
-        "messages": []
-    }
+    room = Room(
+        id=room_id,
+        name=room_name[0][0],
+        messages=[]
+    )
 
     for item in messages:
-        room_data["messages"].append(
-            {
-                "id":item[0],
-                "message": item[1],
-                "createdAt": item[2],
-                "user_name":item[3],
-                "score": message_score(item[1])
-            })
+        room.messages.append(
+            Message(
+                id=item[0],
+                message=item[1],
+                userName=item[3],
+                score=message_score(item[1]),
+                createdAt=item[2],
+            )
+        )
     cur.close()
     release_connection(conn)
 
-    return room_data
+    return room 
 
 defaultMessage = ['👍', '😁', '🤩', '🤯', '😑', '🤔','わかる','ざわざわ']
 
 #メッセージ新規作成
 @app.post("/rooms/{room_id}/messages")
-async def create_message(room_id:str, message_request:CreateMessageRequest):
+async def create_message(room_id:str, message_request:CreateMessageRequest) -> Message:
     now = int(time.time())
     score = message_score(message_request.message)
     message = {
@@ -138,7 +151,7 @@ async def create_message(room_id:str, message_request:CreateMessageRequest):
       "id": message_request.id,
       "message": message_request.message,
       "createdAt": now,
-      "user_name": message_request.user_name,
+      "userName": message_request.user_name,
       "score": score
     }
     await manager.broadcast(room_id, json.dumps(message))
@@ -146,7 +159,18 @@ async def create_message(room_id:str, message_request:CreateMessageRequest):
     if message_request.message not in defaultMessage:
         conn = get_connection()
         cur = conn.cursor()
-        cur.execute(f"INSERT INTO messages (id,message,created_at,room_id,user_name) VALUES('{message['id']}','{message['message']}','{message['createdAt']}','{room_id}','{message['user_name']}')")
+        cur.execute(
+            """
+            INSERT INTO messages (id, message, created_at, room_id, user_name) 
+            VALUES (%s, %s, %s, %s, %s)
+            """, 
+            (
+                message_request.id, 
+                message_request.message, 
+                now, 
+                room_id, 
+                message_request.user_name,
+            ))
         conn.commit()
         cur.close()
         release_connection(conn)

@@ -8,11 +8,13 @@ export const useRoom = ({ roomId }: { roomId: string }) => {
   const [room, setRoom] = useState<Room | null>(null);
   const [moodPercentage, setMoodPercentage] = useState<number>(0);
   const [isTutorialDone, setIsTutorialDone] = useState(false);
+  const [userName, setUserName] = useState<string | undefined>();
 
   const sendMessage = useCallback(
-    async ({ value }: { value: string }) => {
+    async ({ value, userName }: { value: string; userName?: string }) => {
       const message: Message = {
         id: uuidv4(),
+        userName,
         message: value,
         createdAt: Date.now(),
       };
@@ -30,8 +32,9 @@ export const useRoom = ({ roomId }: { roomId: string }) => {
       const api = new RoomApi();
       await api.sendMessage({
         id: message.id,
-        message: message.message,
         roomId,
+        userName,
+        message: message.message,
       });
     },
     [roomId],
@@ -117,9 +120,11 @@ export const useRoom = ({ roomId }: { roomId: string }) => {
 
   return {
     room,
+    userName,
     messages: room?.messages ?? [],
     sendMessage,
     isTutorialDone,
     moodPercentage,
+    setUserName,
   };
 };
