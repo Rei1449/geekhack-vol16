@@ -15,7 +15,7 @@ export const MessageDisplay = ({
   bufferDurationInSec = 10
 }: {
   messages: Message[];
-  bufferDurationInSec: number;
+  bufferDurationInSec?: number;
 }) => {
   const [messages, setMessages] = useState<MessageWithAnimation[]>([]);
 
