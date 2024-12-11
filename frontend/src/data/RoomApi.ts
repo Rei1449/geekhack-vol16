@@ -39,6 +39,7 @@ export class RoomApi {
     return {
       id: response.data['id'],
       message: response.data['message'],
+      score: response.data['score'],
       createdAt: response.data['createdAt'],
     };
   }
