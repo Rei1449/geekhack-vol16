@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import {
   isMessageContainedArray,
   isQuestion,
@@ -6,7 +7,6 @@ import {
 import styled from 'styled-components';
 import { HStack } from '../common/HStack';
 import { VStack } from '../common/VStack';
-import { useCallback } from 'react';
 
 export function MessageHistory({
   messages,
@@ -33,7 +33,7 @@ export function MessageHistory({
       'rgb(255, 214, 214)',
       'rgb(255, 204, 204)',
       'rgb(255, 191, 191)',
-      'rgb(255, 178, 178)'  // Light red
+      'rgb(255, 178, 178)', // Light red
     ];
     if (!score) return colors[0];
     if (score < 0) return colors[0];
@@ -91,9 +91,13 @@ export function MessageHistory({
                   >
                     匿名さん
                   </MessageText>
-                  <HStack style={{ width: '100%', justifyContent: 'space-between' }}>
+                  <HStack
+                    style={{ width: '100%', justifyContent: 'space-between' }}
+                  >
                     <MessageText>{message.message}</MessageText>
-                    <QuestionScore style={{ backgroundColor: getScoreColor(message.score) }}>
+                    <QuestionScore
+                      style={{ backgroundColor: getScoreColor(message.score) }}
+                    >
                       {Math.round(message.score || 0)}
                     </QuestionScore>
                   </HStack>
