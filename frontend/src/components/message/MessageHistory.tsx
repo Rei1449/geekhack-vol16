@@ -89,7 +89,7 @@ export function MessageHistory({
                       color: 'rgba(0, 0, 0, 0.6)',
                     }}
                   >
-                    匿名さん
+                    {message?.userName ?? '匿名さん'}
                   </MessageText>
                   <HStack
                     style={{ width: '100%', justifyContent: 'space-between' }}

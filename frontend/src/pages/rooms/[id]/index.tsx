@@ -6,6 +6,7 @@ import { MessageHistory } from 'src/components/message/MessageHistory';
 import { MoodGage } from 'src/components/message/MoodGage';
 import { ScreenShare } from 'src/components/message/ScreenShare';
 import { Tutorial } from 'src/components/message/Tutorial';
+import { UserName } from 'src/components/message/UserName';
 import { useRoom } from 'src/hooks/room';
 import { useScreenShare } from 'src/hooks/room/useScreenShare';
 import { REACTION_TEXT } from 'src/models/Message';
@@ -15,6 +16,17 @@ import { v4 as uuidv4 } from 'uuid';
 export default function RoomPage() {
   const router = useRouter();
   const { id } = useMemo(() => router.query, [router.query]);
+  const {
+    room,
+    userName,
+    messages,
+    sendMessage,
+    isTutorialDone,
+    moodPercentage,
+    setUserName,
+  } = useRoom({
+    roomId: id as string,
+  });
   const screenShareUid = useMemo(() => uuidv4(), []);
   const { isSharing, screenTrack, startScreenShare, stopScreenShare } =
     useScreenShare({
@@ -22,18 +34,14 @@ export default function RoomPage() {
       uid: screenShareUid,
     });
 
-  const { room, messages, sendMessage, isTutorialDone, moodPercentage } =
-    useRoom({
-      roomId: id as string,
-    });
   const reactions = [...REACTION_TEXT.NEGATIVE, ...REACTION_TEXT.POSITIVE];
   const [isOpenMessageDialog, setIsOpenMessageDialog] = useState(false);
 
   const handleSendMessage = useCallback(
     (value: string) => {
-      sendMessage({ value });
+      sendMessage({ value, userName });
     },
-    [sendMessage],
+    [sendMessage, userName],
   );
 
   const handleSendReaction = useCallback(
@@ -75,6 +83,9 @@ export default function RoomPage() {
         onSendMessage={handleSendMessage}
         onSendReaction={handleSendReaction}
       />
+      <UserNameWrapper>
+        <UserName name={userName} onChangeName={setUserName} />
+      </UserNameWrapper>
       <MoodGageWrapper>
         <MoodGage percentage={moodPercentage} />
       </MoodGageWrapper>
@@ -113,4 +124,12 @@ const RoomName = styled.div`
   font-weight: bold;
   color: rgba(0, 0, 0, 0.1);
   z-index: 1;
+`;
+
+const UserNameWrapper = styled.div`
+  padding: 16px;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
 `;
