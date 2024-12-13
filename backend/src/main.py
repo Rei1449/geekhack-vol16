@@ -103,7 +103,7 @@ async def create_room(room_request:CreateRoomRequest) -> Room:
 
     conn = get_connection()
     cur = conn.cursor()
-    cur.execute(f"INSERT INTO rooms (id,name) VALUES('{room['id']}','{room['name']}')")
+    cur.execute(f"INSERT INTO rooms (id,name) VALUES('{room.id}','{room.name}')")
     conn.commit()
     cur.close()
     release_connection(conn)
