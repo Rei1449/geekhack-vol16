@@ -12,8 +12,11 @@ import psycopg2
 from psycopg2.extensions import connection
 from psycopg2 import pool
 from typing import Optional
+import requests
 
 load_dotenv()
+if os.getenv("ENV") != "production":
+    load_dotenv(".env.development")
 
 app = FastAPI()
 
@@ -112,14 +115,15 @@ async def room(room_id:str):
         "messages": []
     }
 
-    for item in messages:
+    message_scores = calc_message_scores([item[1] for item in messages])
+    for item, message_score in zip(messages, message_scores):
         room_data["messages"].append(
             {
                 "id":item[0],
                 "message": item[1],
                 "createdAt": item[2],
                 "user_name":item[3],
-                "score": message_score(item[1])
+                "score": message_score 
             })
     cur.close()
     release_connection(conn)
@@ -132,7 +136,7 @@ defaultMessage = ['👍', '😁', '🤩', '🤯', '😑', '🤔','わかる','�
 @app.post("/rooms/{room_id}/messages")
 async def create_message(room_id:str, message_request:CreateMessageRequest):
     now = int(time.time())
-    score = message_score(message_request.message)
+    score = calc_message_scores([message_request.message])[0]
     message = {
       "type":"messages/new",
       "id": message_request.id,
@@ -141,6 +145,7 @@ async def create_message(room_id:str, message_request:CreateMessageRequest):
       "user_name": message_request.user_name,
       "score": score
     }
+    print(message, score)
     await manager.broadcast(room_id, json.dumps(message))
 
     if message_request.message not in defaultMessage:
@@ -163,8 +168,17 @@ async def connect_websocket(websocket: WebSocket, room_id: str):
         manager.disconnect(websocket, room_id)
         print("websocket disconnected", websocket)
 
-def message_score(message):
-    if "?" in message or "？" in message:
-        return 1
-    else:
-        return -1
+def calc_message_scores(messages: List[str]) -> List[float]:
+    try: 
+        response = requests.post(
+            f'{os.getenv("QUESTION_SCORE_API_PROTOCOL")}://{os.getenv("QUESTION_SCORE_API_HOST")}/predict',
+            json={"texts": messages}
+        )
+        response.raise_for_status()
+        scores = response.json()["scores"]
+        return scores
+    except: 
+        return [
+            1 if "?" in message or "？" in message else -1
+            for message in messages 
+        ]
