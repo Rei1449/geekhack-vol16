@@ -6,6 +6,7 @@ import {
 import styled from 'styled-components';
 import { HStack } from '../common/HStack';
 import { VStack } from '../common/VStack';
+import { useCallback } from 'react';
 
 export function MessageHistory({
   messages,
@@ -18,6 +19,28 @@ export function MessageHistory({
   onClickOutside: () => void;
   onClose: () => void;
 }) {
+  const getScoreColor = useCallback((score?: number) => {
+    console.log('getScoreColor', score);
+    score = Math.round(score || 0);
+    const colors = [
+      'rgb(204, 229, 255)', // Light blue
+      'rgb(218, 234, 255)',
+      'rgb(229, 225, 255)', // Light indigo
+      'rgb(243, 225, 255)', // Light purple
+      'rgb(255, 223, 248)', // Light magenta
+      'rgb(255, 223, 234)', // Light pink
+      'rgb(255, 223, 223)',
+      'rgb(255, 214, 214)',
+      'rgb(255, 204, 204)',
+      'rgb(255, 191, 191)',
+      'rgb(255, 178, 178)'  // Light red
+    ];
+    if (!score) return colors[0];
+    if (score < 0) return colors[0];
+    if (score > colors.length) return colors[colors.length - 1];
+    return colors[score];
+  }, []);
+
   if (!isOpen) {
     return null;
   }
@@ -68,7 +91,12 @@ export function MessageHistory({
                   >
                     匿名さん
                   </MessageText>
-                  <MessageText>{message.message}</MessageText>
+                  <HStack style={{ width: '100%', justifyContent: 'space-between' }}>
+                    <MessageText>{message.message}</MessageText>
+                    <QuestionScore style={{ backgroundColor: getScoreColor(message.score) }}>
+                      {Math.round(message.score || 0)}
+                    </QuestionScore>
+                  </HStack>
                 </VStack>
               ))}
           </VStack>
@@ -116,6 +144,16 @@ const DialogTitle = styled.div`
 
 const MessageText = styled.div`
   font-family: 'Noto Sans JP', sans-serif;
+  flex: 1;
+`;
+
+const QuestionScore = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 100%;
 `;
 
 const CloseButton = styled.button`
