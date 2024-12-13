@@ -44,8 +44,13 @@ export const useRoom = ({ roomId }: { roomId: string }) => {
     setRoom((prev) => {
       if (prev) {
         // 自分で送信したメッセージはすでに追加されている
-        const isAlreadyExist = prev.messages.some((m) => m.id === message.id);
+        const prevSendMessageIdx = prev.messages.findIndex(
+          (m) => m.id === message.id,
+        );
+        const isAlreadyExist = prevSendMessageIdx !== -1;
         if (isAlreadyExist) {
+          // すでに存在する場合は値を更新する
+          prev.messages[prevSendMessageIdx] = message;
           return prev;
         }
         return {
