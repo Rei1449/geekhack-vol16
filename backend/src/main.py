@@ -168,11 +168,12 @@ async def connect_websocket(websocket: WebSocket, room_id: str):
         manager.disconnect(websocket, room_id)
         print("websocket disconnected", websocket)
 
-def calc_message_scores(messages: List[str]) -> List[float]:
+def calc_message_scores(messages: List[str], timeout=0.5) -> List[float]:
     try: 
         response = requests.post(
             f'{os.getenv("QUESTION_SCORE_API_PROTOCOL")}://{os.getenv("QUESTION_SCORE_API_HOST")}/predict',
-            json={"texts": messages}
+            json={"texts": messages},
+            timeout=timeout
         )
         response.raise_for_status()
         scores = response.json()["scores"]
