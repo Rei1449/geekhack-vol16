@@ -50,7 +50,7 @@ export const useRoom = ({ roomId }: { roomId: string }) => {
         const isAlreadyExist = prevSendMessageIdx !== -1;
         if (isAlreadyExist) {
           // すでに存在する場合は値を更新する
-          prev.messages[prevSendMessageIdx] = message;
+          prev.messages[prevSendMessageIdx].score = message?.score;
           return prev;
         }
         return {
